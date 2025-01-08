@@ -20,19 +20,15 @@
     <el-container>
       <el-header>
         <!-- <RouterLink to="/">PigChat</RouterLink> -->
-        <el-menu
-          :default-active="activeIndex2"
-          class="el-menu-demo"
-          mode="horizontal"
-          text-color="#000"
-          active-text-color="#ffd04b"
-          @select="handleSelect"
-        >
-          <el-menu-item>
-            <el-icon><icon-menu /></el-icon>
-            <span>PigGpt</span>
-          </el-menu-item>
-        </el-menu>
+        <div class="config-setting">
+          <Operation style="width: 1.5rem; height: 1.5rem; margin-right: 8px" />
+        </div>
+        <div>
+          PigGpt <el-icon><ArrowDown /></el-icon>
+        </div>
+        <div class="edit-setting">
+          <Edit style="width: 1.5rem; height: 1.5rem; margin-right: 8px" />
+        </div>
       </el-header>
       <el-main><RouterView /> </el-main>
     </el-container>
@@ -59,6 +55,17 @@ const handleSelect = (key: string, keyPath: string[]) => {
 }
 .el-header {
   height: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .config-setting {
+    display: none;
+  }
+
+  .edit-setting {
+    display: none;
+  }
+
   /* background-color: red; */
 }
 .el-main {
@@ -70,9 +77,19 @@ const handleSelect = (key: string, keyPath: string[]) => {
 .el-button {
   display: block;
 }
-@media (max-width: 576px) {
+@media (max-width: 480px) {
   .el-aside {
     display: none;
+  }
+
+  .el-header {
+    .config-setting {
+      display: block;
+    }
+
+    .edit-setting {
+      display: block;
+    }
   }
 }
 /*

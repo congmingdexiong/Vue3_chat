@@ -3,22 +3,32 @@
     <div class="chat-content">
       <div class="chat-content-middle">
         <div class="article article-my-query">
-          <article>123</article>
+          <article>Hi</article>
         </div>
         <div class="article article-bot-answer">
           <div class="avatar_bot">
-            <PigIcon width="100%" height="100%" />
+            <PigIcon width="2rem" height="2rem" />
           </div>
           <article>你好！ 有什么需要帮忙的吗？😊</article>
         </div>
         <div class="article article-my-query">
-          <article>123</article>
+          <article>谁是最好的熊</article>
         </div>
         <div class="article article-bot-answer">
           <div class="avatar_bot">
-            <PigIcon width="100%" height="100%" />
+            <PigIcon width="2rem" height="2rem" />
           </div>
-          <article>你好！ 有什么需要帮忙的吗？😊</article>
+          <article>
+            The best bear depends on the context! Here are a few contenders for "best bear":
+            <ul>
+              <li>Winnie the Pooh: The beloved, honey-loving bear from A. A. Milne's stories.</li>
+              <li>Paddington Bear: A polite bear from Peru who loves marmalade sandwiches.</li>
+              <li>Baloo: The laid-back, fun-loving bear from The Jungle Book.</li>
+              <li>The Care Bears: A group of colorful, caring bears from the 80s.</li>
+              <li>Grizzly Bears: Majestic, wild, and powerful animals in nature.</li>
+              <li>Bear Grylls: Not an actual bear, but people love this survival</li>
+            </ul>
+          </article>
         </div>
       </div>
     </div>
@@ -44,6 +54,8 @@
   .chat-content {
     // background-color: red;
     height: 90%;
+    overflow-y: scroll;
+
     .chat-content-middle {
       width: 60%;
       height: 100%;
@@ -54,6 +66,14 @@
         display: flex;
         width: 100%;
         align-items: center;
+        line-height: 1.75;
+        align-items: flex-start;
+
+        ul {
+          li {
+            margin: 0.5rem;
+          }
+        }
 
         .avatar_bot {
           display: flex;
@@ -85,6 +105,10 @@
         }
       }
     }
+  }
+
+  .chat-content::-webkit-scrollbar {
+    display: none;
   }
 
   .chat-translator {
@@ -119,6 +143,26 @@
       'Segoe UI Symbol';
     scrollbar-color: rgb(236, 236, 236) rgba(0, 0, 0, 0);
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+
+  /* 在小屏幕上调整文本大小 */
+  @media screen and (max-width: 768px) {
+  }
+
+  /* 在非常小的屏幕上进一步调整文本大小 */
+  @media screen and (max-width: 480px) {
+    .chat-content {
+      height: 99%;
+      .chat-content-middle {
+        width: 100%;
+        > .article {
+          line-height: 1.75;
+        }
+      }
+    }
+    .chat-translator {
+      display: none;
+    }
   }
 }
 </style>
