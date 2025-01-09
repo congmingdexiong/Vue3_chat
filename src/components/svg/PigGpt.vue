@@ -22,7 +22,7 @@
 
 <script setup lang="ts" name="PigGpt">
 defineProps<{
-  name: string
+  name?: string
   width: string
   height: string
   color?: string
