@@ -1,19 +1,3 @@
-<!-- <template>
-
-  <div class="common-layout">
-    <el-container>
-      <el-aside width="200px">Aside</el-aside>
-      <el-container>
-        <el-header><RouterLink to="/">Chat</RouterLink></el-header>
-        <el-main>
-          <RouterView />
-           <el-button type="primary">Primary</el-button>
-        </el-main>
-      </el-container>
-    </el-container>
-  </div>
-</template> -->
-
 <template>
   <el-container class="common-layout" v-loading.fullscreen.lock="loader">
     <el-aside width="200px">Aside</el-aside>
@@ -39,8 +23,6 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { provide, ref } from 'vue'
 
-const activeIndex = ref('1')
-const activeIndex2 = ref('1')
 const loader = ref(false)
 const setLoadingState = (loading: boolean) => {
   loader.value = loading

@@ -31,7 +31,7 @@
       </div>
     </div>
     <div class="chat-translator">translator ongoing</div>
-    <div class="chat-input-area">
+    <div class="chat-input-area" ref="inputArea" tabindex="0">
       <textarea name="" id="" placeholder="MessageChatGPT" style="display: none"></textarea>
       <div
         class="chat-input-area-content-area"
@@ -41,6 +41,7 @@
       ></div>
       <div class="chat-input-submit">
         <button
+          ref="buttonRef"
           aria-label="Send prompt"
           data-testid="send-button"
           @click="handleUserInput()"
@@ -74,6 +75,8 @@
 <script setup lang="ts" name="ChatView">
 import type { Reply } from '@/domain/Reply'
 import { inject, onMounted, reactive, ref } from 'vue'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
 document.onkeydown = function (e) {
   const key = (window as any).event.keyCode
@@ -87,24 +90,13 @@ const { loader, setLoadingState } = inject('appLoading', {
 })
 const replyList = reactive<Reply[]>([])
 const userInput = ref<HTMLElement | null>(null)
-import axios from 'axios'
+const inputArea = ref<HTMLElement | null>(null)
+const buttonRef = ref<HTMLElement | null>(null)
 
 onMounted(() => {
-  //connect gpt...
-  new Promise((res, rej) => {
-    // replyList.push({ type: 'user', content: 'hi' })
-    // replyList.push({ type: 'chat', content: '你好！ 有什么需要帮忙的吗？😊' })
-    // replyList.push({ type: 'user', content: '谁是最好的熊' })
-    // replyList.push({
-    //   type: 'chat',
-    //   content: `The best bear depends on the context! Here are a few contenders for "best bear": Winnie
-    //         the Pooh: The beloved, honey-loving bear from A. A. Milne's stories. Paddington Bear: A
-    //         polite bear from Peru who loves marmalade sandwiches.`,
-    // })
-    res('ok')
-  }).then((data) => {
-    console.log(data)
-  })
+  setTimeout(() => {
+    userInput.value?.focus()
+  }, 5000)
 })
 
 async function handleUserInput() {
@@ -117,7 +109,7 @@ async function handleUserInput() {
       })
       replyList.push({ type: 'chat', content: axiosRes.data?.result })
     } catch (error) {
-      alert(error)
+      ElMessage.error(`程序错误！${error}`)
     } finally {
       setLoadingState(false)
     }
@@ -125,6 +117,9 @@ async function handleUserInput() {
     if (userInput.value) {
       userInput.value.innerText = ''
     }
+  } else {
+    setLoadingState(false)
+    ElMessage.error('您没有输入内容！！')
   }
 }
 </script>

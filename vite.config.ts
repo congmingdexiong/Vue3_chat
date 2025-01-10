@@ -12,7 +12,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    vueDevTools(),
+    // vueDevTools(),
     // createSvgIconsPlugin({
     //   // 指定目录(svg存放目录）
     //   iconDirs: [path.resolve(process.cwd(), 'src/assets/svgs')],
