@@ -17,17 +17,6 @@
             </article>
           </div>
         </template>
-        <!-- <article>
-            The best bear depends on the context! Here are a few contenders for "best bear":
-            <ul>
-              <li>Winnie the Pooh: The beloved, honey-loving bear from A. A. Milne's stories.</li>
-              <li></li>
-              <li>Baloo: The laid-back, fun-loving bear from The Jungle Book.</li>
-              <li>The Care Bears: A group of colorful, caring bears from the 80s.</li>
-              <li>Grizzly Bears: Majestic, wild, and powerful animals in nature.</li>
-              <li>Bear Grylls: Not an actual bear, but people love this survival</li>
-            </ul>
-          </article> -->
       </div>
     </div>
     <div class="chat-translator">translator ongoing</div>
