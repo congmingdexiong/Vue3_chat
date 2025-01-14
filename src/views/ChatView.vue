@@ -3,19 +3,7 @@
     <div class="chat-content">
       <div class="chat-content-middle">
         <template v-for="(item, index) in replyList" v-bind:key="index">
-          <div v-if="item.type === 'user'" class="article article-my-query">
-            <article>
-              {{ item.content }}
-            </article>
-          </div>
-          <div v-if="item.type === 'chat'" class="article article-bot-answer">
-            <div class="avatar_bot">
-              <PigIcon width="2rem" height="2rem" />
-            </div>
-            <article>
-              {{ item.content }}
-            </article>
-          </div>
+          <Article :item="item"></Article>
         </template>
       </div>
     </div>
@@ -63,6 +51,7 @@
 
 <script setup lang="ts" name="ChatView">
 import type { Reply } from '@/domain/Reply'
+import Article from '@/components/Article.vue'
 import { inject, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
@@ -127,48 +116,6 @@ async function handleUserInput() {
       width: 60%;
       height: 100%;
       margin: 0 auto;
-      > .article {
-        display: flex;
-        width: 100%;
-        align-items: center;
-        line-height: 1.75;
-        align-items: flex-start;
-
-        ul {
-          li {
-            margin: 0.5rem;
-          }
-        }
-
-        .avatar_bot {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border: 1px solid rgb(227, 227, 227);
-          width: 2.5rem;
-          height: 2.5rem;
-          border-radius: 50%;
-        }
-
-        &.article-my-query {
-          justify-content: end;
-          > article {
-            background-color: hsla(0, 4%, 79%, 0.5);
-          }
-        }
-        &.article-bot-answer {
-          justify-content: start;
-          margin-bottom: 1rem;
-        }
-        article {
-          border-radius: 1.5rem;
-          padding-bottom: 0.625rem;
-          padding-left: 1.25rem;
-          padding-right: 1.25rem;
-          padding-top: 0.625rem;
-          display: inline-block;
-        }
-      }
     }
   }
 
