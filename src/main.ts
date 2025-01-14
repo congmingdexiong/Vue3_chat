@@ -9,12 +9,14 @@ import App from './App.vue'
 import router from './router'
 
 import PigIcon from './components/svg/PigGpt.vue'
+import SubmitIco from './components/svg/Submit.vue'
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 app.component('PigIcon', PigIcon)
+app.component('SubmitIco', SubmitIco)
 app.use(createPinia())
 app.use(ElementPlus)
 app.use(router)

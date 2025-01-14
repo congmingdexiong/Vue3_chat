@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts" name="Article">
-defineProps(['item'])
+const { item } = defineProps(['item'])
 </script>
 
 <style scoped lang="scss">
