@@ -9,82 +9,44 @@
     </div>
     <div class="chat-translator">translator ongoing</div>
     <div class="chat-input-area" ref="inputArea" tabindex="0">
-      <textarea name="" id="" placeholder="MessageChatGPT" style="display: none"></textarea>
-      <div
-        class="chat-input-area-content-area"
-        contenteditable="true"
-        data-virtualkeyboard="true"
-        ref="userInput"
-      ></div>
-      <div class="chat-input-submit">
-        <button
-          ref="buttonRef"
-          aria-label="Send prompt"
-          data-testid="send-button"
-          @click="handleUserInput()"
-          @keydown.enter="handleUserInput()"
-        >
-          <SubmitIco></SubmitIco>
-        </button>
-      </div>
-      <!-- <el-button type="primary">Primary</el-button> -->
-      <!-- <p data-placeholder="Message ChatGPT" class="placeholder">
-          <br class="ProseMirror-trailingBreak" />
-        </p> -->
+      <InputBox :replyList="replyList" :setReplyList="getReplyList"></InputBox>
     </div>
   </div>
 </template>
 
 <script setup lang="ts" name="ChatView">
-import type { Reply } from '@/domain/Reply'
 import Article from '@/components/Article.vue'
-import { inject, onMounted, reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import InputBox from '@/components/InputBox.vue'
+import type { Reply } from '@/domain/Reply'
+import { isEmpty } from 'lodash'
+import { reactive, ref, watchEffect } from 'vue'
 
-document.onkeydown = function (e) {
-  const key = (window as any).event.keyCode
-  if (key === 13) {
-    handleUserInput()
-  }
-}
-const { loader, setLoadingState } = inject('appLoading', {
-  loader: false,
-  setLoadingState: (loading: boolean) => {},
-})
-const replyList = reactive<Reply[]>([])
-const userInput = ref<HTMLElement | null>(null)
 const inputArea = ref<HTMLElement | null>(null)
-const buttonRef = ref<HTMLElement | null>(null)
+const replyList = reactive<Reply[]>([])
 
-onMounted(() => {
-  setTimeout(() => {
-    userInput.value?.focus()
-  }, 5000)
+function getReplyList(reply: Reply) {
+  replyList.push(reply)
+}
+
+watchEffect(() => {
+  if (!isEmpty(replyList) && document.querySelector('.chat-content')) {
+    setTimeout(() => {
+      const element = document.querySelector('.chat-content') as HTMLElement
+      if (element.scrollHeight > element.clientHeight) {
+        element.scrollTop = element.scrollHeight
+      }
+    }, 10)
+  }
 })
 
-async function handleUserInput() {
-  setLoadingState(true)
-  if (userInput?.value?.innerText) {
-    replyList.push({ type: 'user', content: userInput?.value?.innerText })
-    try {
-      const axiosRes = await axios.post('/api', {
-        userMsg: userInput?.value?.innerText,
-      })
-      replyList.push({ type: 'chat', content: axiosRes.data?.result })
-    } catch (error) {
-      ElMessage.error(`程序错误！${error}`)
-    } finally {
-      setLoadingState(false)
-    }
-
-    if (userInput.value) {
-      userInput.value.innerText = ''
-    }
-  } else {
-    setLoadingState(false)
-    ElMessage.error('您没有输入内容！！')
-  }
+function getScrollHeight(element: HTMLElement | any) {
+  // 获取元素的内容高度
+  const totalHeight = element.scrollHeight
+  // 获取元素的可视区域高度
+  const viewportHeight = element.clientHeight
+  // 获取滚动条高度
+  const scrollHeight = totalHeight - viewportHeight
+  return scrollHeight
 }
 </script>
 
@@ -125,27 +87,6 @@ async function handleUserInput() {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    .chat-input-area-content-area {
-      &:focus {
-        outline: none;
-      }
-    }
-
-    .chat-input-submit {
-      > button {
-        height: 2rem;
-        width: 2rem;
-        background-color: #000;
-        border-radius: 50%;
-        padding: 0;
-        > svg {
-          color: white;
-        }
-      }
-      display: flex;
-      justify-content: end;
-      margin-right: 1rem;
-    }
   }
   .chat-input-area:first-child {
     border-bottom-color: rgb(227, 227, 227);
@@ -168,16 +109,13 @@ async function handleUserInput() {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
 
-  /* 在小屏幕上调整文本大小 */
-  @media screen and (max-width: 768px) {
-  }
-
   /* 在非常小的屏幕上进一步调整文本大小 */
   @media screen and (max-width: 480px) {
     .chat-content {
       height: 99%;
       .chat-content-middle {
         width: 100%;
+        height: 100%;
         > .article {
           line-height: 1.75;
         }
