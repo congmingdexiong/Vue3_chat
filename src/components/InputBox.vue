@@ -4,6 +4,7 @@
     class="chat-input-area-content-area"
     contenteditable="true"
     data-virtualkeyboard="true"
+    placeholder="Message PigGPT"
     ref="userInput"
   ></div>
   <div class="chat-input-submit">
@@ -17,10 +18,6 @@
       <SubmitIco></SubmitIco>
     </button>
   </div>
-  <!-- <el-button type="primary">Primary</el-button> -->
-  <!-- <p data-placeholder="Message ChatGPT" class="placeholder">
-          <br class="ProseMirror-trailingBreak" />
-        </p> -->
 </template>
 
 <script setup lang="ts" name="InputBox">
@@ -77,6 +74,14 @@ async function handleUserInput() {
 .chat-input-area-content-area {
   &:focus {
     outline: none;
+  }
+  &:empty:before {
+    content: attr(placeholder);
+    color: grey;
+  }
+  /* 输入框获取焦点时移除 placeholder */
+  &:focus:before {
+    content: none;
   }
 }
 

@@ -32,7 +32,10 @@ watchEffect(() => {
   if (!isEmpty(replyList) && document.querySelector('.chat-content')) {
     setTimeout(() => {
       const element = document.querySelector('.chat-content') as HTMLElement
-      if (element.scrollHeight > element.clientHeight) {
+      console.log('element.clientHeight', element.clientHeight)
+      console.log('element.scrollHeight', element.scrollHeight)
+
+      if (element.scrollHeight > element.clientHeight + 16) {
         element.scrollTop = element.scrollHeight
       }
     }, 10)
@@ -50,7 +53,7 @@ function getScrollHeight(element: HTMLElement | any) {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .chat-wrapper {
   display: flex;
   flex-direction: column;
@@ -58,7 +61,7 @@ function getScrollHeight(element: HTMLElement | any) {
 
   .chat-content {
     height: 90%;
-    overflow-y: scroll;
+    overflow-y: auto;
 
     .chat-content-middle {
       width: 60%;
@@ -87,6 +90,7 @@ function getScrollHeight(element: HTMLElement | any) {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
   }
   .chat-input-area:first-child {
     border-bottom-color: rgb(227, 227, 227);
