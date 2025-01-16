@@ -33,11 +33,11 @@ const { loader, setLoadingState } = inject('appLoading', {
 const buttonRef = ref<HTMLElement | null>(null)
 const userInput = ref<HTMLElement | null>(null)
 
-onMounted(() => {
-  setTimeout(() => {
-    userInput.value?.focus()
-  }, 5000)
-})
+// onMounted(() => {
+//   setTimeout(() => {
+//     userInput.value?.focus()
+//   }, 5000)
+// })
 
 document.onkeydown = function (e) {
   const key = (window as any).event.keyCode
