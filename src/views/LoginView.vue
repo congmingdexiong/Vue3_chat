@@ -12,9 +12,9 @@
 
 <script setup lang="ts" name="LoginView">
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { getQRCode, getSceneId } from '@/service/WeChatService'
 const router = useRouter()
 const imageRef = ref()
 const sceneId = ref('')
@@ -23,9 +23,8 @@ let checkStatusInterval: any
 onMounted(async () => {
   console.log('connect to server for QR code..')
   try {
-    sceneId.value = (await axios.get('/wxlogin/scene-id')).data
-    const image = (await axios.get(`/wxlogin/qrcode?sceneId=${sceneId.value}`)).data
-    imageRef.value.src = image
+    sceneId.value = await getSceneId()
+    imageRef.value.src = await getQRCode(sceneId.value)
     startPolling()
   } catch (error) {
     console.log(error)
@@ -33,9 +32,8 @@ onMounted(async () => {
 })
 
 async function refreshQrCode() {
-  sceneId.value = (await axios.get('/wxlogin/scene-id')).data
-  const image = (await axios.get(`/wxlogin/qrcode?sceneId=${sceneId.value}`)).data
-  imageRef.value.src = image
+  sceneId.value = await getSceneId()
+  imageRef.value.src = await getQRCode(sceneId.value)
   ElMessage.info('二维码已经刷新')
 }
 

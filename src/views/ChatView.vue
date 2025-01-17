@@ -32,8 +32,6 @@ watchEffect(() => {
   if (!isEmpty(replyList) && document.querySelector('.chat-content')) {
     setTimeout(() => {
       const element = document.querySelector('.chat-content') as HTMLElement
-      console.log('element.clientHeight', element.clientHeight)
-      console.log('element.scrollHeight', element.scrollHeight)
 
       if (element.scrollHeight > element.clientHeight + 16) {
         element.scrollTop = element.scrollHeight

@@ -24,6 +24,7 @@
 import { inject, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
+import { getChatData } from '@/service/WeChatService'
 
 const props = defineProps(['setReplyList'])
 const { loader, setLoadingState } = inject('appLoading', {
@@ -50,10 +51,8 @@ async function handleUserInput() {
   if (userInput?.value?.innerText) {
     props.setReplyList({ type: 'user', content: userInput?.value?.innerText })
     try {
-      const axiosRes = await axios.post('/api', {
-        userMsg: userInput?.value?.innerText,
-      })
-      props.setReplyList({ type: 'chat', content: axiosRes.data?.result })
+      const axiosRes = await getChatData(userInput?.value?.innerText)
+      props.setReplyList({ type: 'chat', content: axiosRes.result })
     } catch (error) {
       ElMessage.error(`程序错误！${error}`)
     } finally {
