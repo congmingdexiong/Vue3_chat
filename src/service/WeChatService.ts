@@ -13,3 +13,7 @@ export const getChatData = async (userMsg: string) => {
     userMsg: userMsg,
   })
 }
+
+export const getUserInfo = async () => {
+  return await AxiosInstance.get<null, { nickname: string; headimgurl: string }>('/wechat/userInfo')
+}

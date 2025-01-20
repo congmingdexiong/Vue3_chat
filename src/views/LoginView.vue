@@ -43,7 +43,7 @@ function handleLoginSuccess() {
   }
   // 延迟跳转到首页
   setTimeout(() => {
-    router.push('/chat')
+    router.push('/authenticate')
   }, 500)
 }
 

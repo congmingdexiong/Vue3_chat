@@ -18,11 +18,28 @@
 import Article from '@/components/Article.vue'
 import InputBox from '@/components/InputBox.vue'
 import type { Reply } from '@/domain/Reply'
+import { getUserInfo } from '@/service/WeChatService'
+import { ElMessage } from 'element-plus'
 import { isEmpty } from 'lodash'
-import { reactive, ref, watchEffect } from 'vue'
-
+import { onMounted, reactive, ref, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const inputArea = ref<HTMLElement | null>(null)
 const replyList = reactive<Reply[]>([])
+
+onMounted(async () => {
+  try {
+    const userInfo = await getUserInfo()
+    if (isEmpty(userInfo.nickname)) {
+      ElMessage.error('用户信息不存在，请重新登录')
+      router.push('/')
+    } else {
+    }
+  } catch {
+    ElMessage.error('用户信息不存在，请重新登录')
+    router.push('/')
+  }
+})
 
 function getReplyList(reply: Reply) {
   replyList.push(reply)
