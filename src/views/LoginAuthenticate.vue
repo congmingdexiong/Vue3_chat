@@ -1,7 +1,8 @@
 ﻿<template>
   <div class="login-container">
     <h2 class="title">欢迎登陆PigGpt</h2>
-    <h3 class="subtitle">请授权微信使用小程序</h3>
+    <h3 class="subtitle">成功登录，请授权微信使用小程序以便继续使用</h3>
+    <br />
     <div class="subtitle">您还可以通过点击“认证”手动授权</div>
     <a
       ref="auth"
