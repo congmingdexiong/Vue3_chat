@@ -16,58 +16,58 @@
 </template>
 
 <script setup lang="ts" name="LoginView">
-import { ElMessage } from 'element-plus'
-import { onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { getQRCode, getSceneId } from '@/service/WeChatService'
-const router = useRouter()
-const imageRef = ref()
-const sceneId = ref('')
-let checkStatusInterval: any
+import { ElMessage } from 'element-plus';
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { getQRCode, getSceneId } from '@/service/WeChatService';
+const router = useRouter();
+const imageRef = ref();
+const sceneId = ref('');
+let checkStatusInterval: any;
 
 onMounted(async () => {
-  console.log('connect to server for QR code..')
+  console.log('connect to server for QR code..');
   try {
-    sceneId.value = await getSceneId()
-    imageRef.value.src = await getQRCode(sceneId.value)
-    startPolling()
+    sceneId.value = await getSceneId();
+    imageRef.value.src = await getQRCode(sceneId.value);
+    startPolling();
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-})
+});
 
 async function refreshQrCode() {
-  sceneId.value = await getSceneId()
-  imageRef.value.src = await getQRCode(sceneId.value)
-  ElMessage.info('二维码已经刷新')
+  sceneId.value = await getSceneId();
+  imageRef.value.src = await getQRCode(sceneId.value);
+  ElMessage.info('二维码已经刷新');
 }
 
 function handleLoginSuccess() {
   if (checkStatusInterval) {
-    clearInterval(checkStatusInterval)
+    clearInterval(checkStatusInterval);
   }
   // 延迟跳转到首页
   setTimeout(() => {
-    router.push('/authenticate')
-  }, 500)
+    router.push('/authenticate');
+  }, 500);
 }
 
 function startPolling() {
   if (checkStatusInterval) {
-    clearInterval(checkStatusInterval)
+    clearInterval(checkStatusInterval);
   }
 
   checkStatusInterval = setInterval(async () => {
     try {
-      const response = await fetch(`/wxlogin/status?sceneId=${sceneId.value}`)
-      const status = await response.text()
+      const response = await fetch(`/wxlogin/status?sceneId=${sceneId.value}`);
+      const status = await response.text();
       if (status === 'success') {
-        handleLoginSuccess()
+        handleLoginSuccess();
       }
     } catch (error) {
-      console.error('检查状态失败：', error)
+      console.error('检查状态失败：', error);
     }
-  }, 2000)
+  }, 2000);
 }
 </script>
 

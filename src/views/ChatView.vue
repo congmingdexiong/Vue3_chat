@@ -15,59 +15,59 @@
 </template>
 
 <script setup lang="ts" name="ChatView">
-import Article from '@/components/Article.vue'
-import InputBox from '@/components/InputBox.vue'
-import type { Reply } from '@/domain/Reply'
-import { getUserInfo } from '@/service/WeChatService'
-import { ElMessage } from 'element-plus'
-import { isEmpty } from 'lodash'
-import { onMounted, reactive, ref, watchEffect } from 'vue'
-import { useRouter } from 'vue-router'
-const router = useRouter()
-const inputArea = ref<HTMLElement | null>(null)
-const replyList = reactive<Reply[]>([])
-const userInformation = ref({})
+import Article from '@/components/Article.vue';
+import InputBox from '@/components/InputBox.vue';
+import type { Reply } from '@/domain/Reply';
+import { getUserInfo } from '@/service/WeChatService';
+import { ElMessage } from 'element-plus';
+import { isEmpty } from 'lodash';
+import { onMounted, reactive, ref, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+const inputArea = ref<HTMLElement | null>(null);
+const replyList = reactive<Reply[]>([]);
+const userInformation = ref({});
 
 onMounted(async () => {
   try {
-    const userInfo = await getUserInfo()
+    const userInfo = await getUserInfo();
     if (isEmpty(userInfo.nickname)) {
-      ElMessage.error('用户信息不存在，请重新登录')
-      router.push('/')
+      ElMessage.error('用户信息不存在，请重新登录');
+      router.push('/');
     } else {
-      userInformation.value = userInfo
-      ElMessage.info(`您好~~尊敬的 ${userInfo.nickname},欢迎使用PigGpt!!`)
+      userInformation.value = userInfo;
+      ElMessage.info(`您好~~尊敬的 ${userInfo.nickname},欢迎使用PigGpt!!`);
     }
   } catch {
-    ElMessage.error('用户信息不存在，请重新登录')
-    router.push('/')
+    ElMessage.error('用户信息不存在，请重新登录');
+    router.push('/');
   }
-})
+});
 
 function getReplyList(reply: Reply) {
-  replyList.push(reply)
+  replyList.push(reply);
 }
 
 watchEffect(() => {
   if (!isEmpty(replyList) && document.querySelector('.chat-content')) {
     setTimeout(() => {
-      const element = document.querySelector('.chat-content') as HTMLElement
+      const element = document.querySelector('.chat-content') as HTMLElement;
 
       if (element.scrollHeight > element.clientHeight + 16) {
-        element.scrollTop = element.scrollHeight
+        element.scrollTop = element.scrollHeight;
       }
-    }, 10)
+    }, 10);
   }
-})
+});
 
 function getScrollHeight(element: HTMLElement | any) {
   // 获取元素的内容高度
-  const totalHeight = element.scrollHeight
+  const totalHeight = element.scrollHeight;
   // 获取元素的可视区域高度
-  const viewportHeight = element.clientHeight
+  const viewportHeight = element.clientHeight;
   // 获取滚动条高度
-  const scrollHeight = totalHeight - viewportHeight
-  return scrollHeight
+  const scrollHeight = totalHeight - viewportHeight;
+  return scrollHeight;
 }
 </script>
 
