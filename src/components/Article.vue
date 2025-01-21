@@ -3,6 +3,9 @@
     <article>
       {{ item.content }}
     </article>
+     <div class="avatar_bot" style="margin-left:0.5rem;">
+      <img style="width: 2rem; height: 2rem;border-radius: 50%;" :src="userInformation.headimgurl"> </img>
+    </div>
   </div>
   <div v-if="item.type === 'chat'" class="article article-bot-answer">
     <div class="avatar_bot">
@@ -15,7 +18,7 @@
 </template>
 
 <script setup lang="ts" name="Article">
-const { item } = defineProps(['item'])
+const { item, userInformation } = defineProps(['item', 'userInformation'])
 </script>
 
 <style scoped lang="scss">

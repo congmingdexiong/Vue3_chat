@@ -3,7 +3,7 @@
     <div class="chat-content">
       <div class="chat-content-middle">
         <template v-for="(item, index) in replyList" v-bind:key="index">
-          <Article :item="item"></Article>
+          <Article :item="item" :userInformation="userInformation"></Article>
         </template>
       </div>
     </div>
@@ -26,6 +26,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const inputArea = ref<HTMLElement | null>(null)
 const replyList = reactive<Reply[]>([])
+const userInformation = ref({})
 
 onMounted(async () => {
   try {
@@ -34,6 +35,8 @@ onMounted(async () => {
       ElMessage.error('用户信息不存在，请重新登录')
       router.push('/')
     } else {
+      userInformation.value = userInfo
+      ElMessage.info(`您好~~尊敬的 ${userInfo.nickname},欢迎使用PigGpt!!`)
     }
   } catch {
     ElMessage.error('用户信息不存在，请重新登录')

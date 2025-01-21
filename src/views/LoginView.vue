@@ -1,7 +1,12 @@
 ﻿<template>
   <div class="login-container">
     <h2 class="title">微信扫码登录</h2>
-    <p class="subtitle">使用微信扫一扫登录</p>
+    <div class="subtitle">
+      <ul>
+        <li>长按下面二维码，识别二维码</li>
+        <li>请在微信中完成下面任何操作</li>
+      </ul>
+    </div>
     <div class="qrcode-wrapper">
       <img id="qrcode" alt="微信登录二维码" ref="imageRef" />
     </div>

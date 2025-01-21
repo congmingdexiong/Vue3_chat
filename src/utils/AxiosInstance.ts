@@ -2,7 +2,7 @@
 
 // 创建 Axios 实例
 const api = axios.create({
-  timeout: 10000, // 请求超时时间
+  timeout: 50000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
     // 可以在这里添加其他默认请求头，如认证token等
