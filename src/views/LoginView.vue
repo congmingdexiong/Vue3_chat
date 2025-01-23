@@ -1,6 +1,6 @@
 ﻿<template>
   <div class="login-container">
-    <h2 class="title">微信扫码登录</h2>
+    <h2 class="title">登录前请先关注公众号</h2>
     <div class="subtitle">
       <ul>
         <li>长按下面二维码，识别二维码</li>
@@ -19,13 +19,27 @@
 import { ElMessage } from 'element-plus';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getQRCode, getSceneId, getStatus } from '@/service/WeChatService';
+import { getQRCode, getSceneId, getStatus, getUserInfo } from '@/service/WeChatService';
+import { isEmpty } from 'lodash';
 const router = useRouter();
 const imageRef = ref();
 const sceneId = ref('');
 let checkStatusInterval: any;
 
 onMounted(async () => {
+  try {
+    const userInfo = await getUserInfo();
+    if (!isEmpty(userInfo.nickname)) {
+      router.push('/chat');
+    } else {
+      fetchQRCode();
+    }
+  } catch {
+    fetchQRCode();
+  }
+});
+
+async function fetchQRCode() {
   console.log('connect to server for QR code..');
   try {
     sceneId.value = await getSceneId();
@@ -34,7 +48,7 @@ onMounted(async () => {
   } catch (error) {
     console.log(error);
   }
-});
+}
 
 async function refreshQrCode() {
   sceneId.value = await getSceneId();

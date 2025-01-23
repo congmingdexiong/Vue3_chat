@@ -20,17 +20,27 @@
 </template>
 
 <script setup lang="ts" name="App">
-import { RouterLink, RouterView } from 'vue-router'
-import { provide, ref } from 'vue'
+import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { provide, ref, watch } from 'vue';
+const route = useRoute(); // 获取当前路由信息
+const currentPath = ref(route.path); // 存储当前路径的响应式引用
 
-const loader = ref(false)
+const loader = ref(false);
 const setLoadingState = (loading: boolean) => {
-  loader.value = loading
-}
-provide('appLoading', { loader, setLoadingState })
+  loader.value = loading;
+};
+provide('appLoading', { loader, setLoadingState });
 const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
+  console.log(key, keyPath);
+};
+
+// 使用watch监听路由变化
+watch(
+  () => route.path,
+  (oldPath, newPath) => {
+    console.log(`route from ${oldPath} to ${newPath}`);
+  }
+);
 </script>
 
 <style>

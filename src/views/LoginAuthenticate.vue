@@ -1,9 +1,9 @@
 ﻿<template>
   <div class="login-container">
-    <h2 class="title">欢迎登陆PigGpt</h2>
-    <h3 class="subtitle">成功登录，请授权微信使用小程序以便继续使用</h3>
+    <h2 class="title">请登陆PigGpt</h2>
+    <h3 class="subtitle">请授权微信使用小程序以便继续使用</h3>
     <br />
-    <div class="subtitle">您还可以通过点击“认证”手动授权</div>
+    <div class="subtitle">若未出现授权按钮，您还可以通过点击“认证”手动授权</div>
     <a
       ref="auth"
       href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxd64b9dcd0674bda1&redirect_uri=http://31qm173jh418.vicp.fun/wechat/callback&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
@@ -13,14 +13,14 @@
 </template>
 
 <script setup lang="ts" name="LoginView">
-import { onMounted, ref } from 'vue'
-const auth = ref()
+import { onMounted, ref } from 'vue';
+const auth = ref();
 
 onMounted(async () => {
   setTimeout(() => {
-    auth.value.click()
-  }, 1000)
-})
+    auth.value.click();
+  }, 1000);
+});
 </script>
 
 <style scoped>
