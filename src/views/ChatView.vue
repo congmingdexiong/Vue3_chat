@@ -53,7 +53,7 @@ watchEffect(() => {
     setTimeout(() => {
       const element = document.querySelector('.chat-content') as HTMLElement;
 
-      if (element.scrollHeight > element.clientHeight + 16) {
+      if (element.scrollHeight > element.clientHeight + 16) { 
         element.scrollTop = element.scrollHeight;
       }
     }, 10);
