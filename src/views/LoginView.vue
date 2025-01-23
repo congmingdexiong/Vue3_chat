@@ -19,7 +19,7 @@
 import { ElMessage } from 'element-plus';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getQRCode, getSceneId } from '@/service/WeChatService';
+import { getQRCode, getSceneId, getStatus } from '@/service/WeChatService';
 const router = useRouter();
 const imageRef = ref();
 const sceneId = ref('');
@@ -59,13 +59,21 @@ function startPolling() {
 
   checkStatusInterval = setInterval(async () => {
     try {
-      const response = await fetch(`/wxlogin/status?sceneId=${sceneId.value}`);
-      const status = await response.text();
+      const response = await getStatus(sceneId.value);
+      const status = await response;
+
+      console.log('登录状态是:', status);
       if (status === 'success') {
         handleLoginSuccess();
       }
+      // if (status === 'fail') {
+      // keep checking status
+      // }
     } catch (error) {
       console.error('检查状态失败：', error);
+      if (checkStatusInterval) {
+        clearInterval(checkStatusInterval);
+      }
     }
   }, 2000);
 }

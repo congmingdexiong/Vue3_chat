@@ -1,19 +1,25 @@
-﻿import AxiosInstance from '@/utils/AxiosInstance'
+﻿import AxiosInstance from '@/utils/AxiosInstance';
 
 export const getSceneId = async () => {
-  return await AxiosInstance.get<null, string>('/wxlogin/scene-id')
-}
+  return await AxiosInstance.get<null, string>('/wxlogin/scene-id');
+};
+
+export const getStatus = async (sceneId: string) => {
+  return await AxiosInstance.get<null, string>(`/wxlogin/status?sceneId=${sceneId}`);
+};
 
 export const getQRCode = async (sceneId: string) => {
-  return await AxiosInstance.get<null, string>(`/wxlogin/qrcode?sceneId=${sceneId}`)
-}
+  return await AxiosInstance.get<null, string>(`/wxlogin/qrcode?sceneId=${sceneId}`);
+};
 
 export const getChatData = async (userMsg: string) => {
   return await AxiosInstance.post<null, { result: string }>('/api', {
-    userMsg: userMsg,
-  })
-}
+    userMsg: userMsg
+  });
+};
 
 export const getUserInfo = async () => {
-  return await AxiosInstance.get<null, { nickname: string; headimgurl: string }>('/wechat/userInfo')
-}
+  return await AxiosInstance.get<null, { nickname: string; headimgurl: string }>(
+    '/wechat/userInfo'
+  );
+};
