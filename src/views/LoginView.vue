@@ -18,7 +18,7 @@
 <script setup lang="ts" name="LoginView">
 import { ElMessage } from 'element-plus';
 import { onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { getQRCode, getSceneId, getStatus, getUserInfo } from '@/service/WeChatService';
 import { isEmpty } from 'lodash';
 const router = useRouter();

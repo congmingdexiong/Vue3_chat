@@ -49,11 +49,11 @@ function getReplyList(reply: Reply) {
 }
 
 watchEffect(() => {
-  if (!isEmpty(replyList) && document.querySelector('.chat-content')) {
+  if (!isEmpty(replyList) && document.querySelector('.chat-content-middle')) {
     setTimeout(() => {
-      const element = document.querySelector('.chat-content') as HTMLElement;
+      const element = document.querySelector('.chat-content-middle') as HTMLElement;
 
-      if (element.scrollHeight > element.clientHeight + 16) { 
+      if (element.scrollHeight > element.clientHeight + 16) {
         element.scrollTop = element.scrollHeight;
       }
     }, 10);
@@ -79,9 +79,10 @@ function getScrollHeight(element: HTMLElement | any) {
 
   .chat-content {
     height: 90%;
-    overflow-y: auto;
+    overflow-y: scroll;
 
     .chat-content-middle {
+      overflow-y: auto;
       width: 60%;
       height: 100%;
       margin: 0 auto;
@@ -138,7 +139,7 @@ function getScrollHeight(element: HTMLElement | any) {
       .chat-content-middle {
         width: 100%;
         height: 100%;
-        overflow: hidden;
+        overflow: auto;
         > .article {
           line-height: 1.75;
         }
