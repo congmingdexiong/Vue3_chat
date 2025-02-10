@@ -16,6 +16,7 @@
             :setReplyList="getReplyList"
             type="deepseek"
             :activeTab="activeTab"
+            title="deepseek-chat"
           ></InputBox>
         </div>
       </div>
@@ -36,6 +37,7 @@
             :setReplyList="getReplyList"
             :activeTab="activeTab"
             type="baidu"
+            title="ERNIE-4.0-8K"
           ></InputBox>
         </div>
       </div>

@@ -4,7 +4,7 @@
     class="chat-input-area-content-area"
     contenteditable="true"
     data-virtualkeyboard="true"
-    placeholder="Message PigGPT"
+    :placeholder="placeholder"
     :id="props.type"
     ref="userInput"
   ></div>
@@ -22,24 +22,19 @@
 </template>
 
 <script setup lang="ts" name="InputBox">
-import { inject, ref } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/WeChatService';
 
-const props = defineProps(['setReplyList', 'type', 'activeTab']);
+const props = defineProps(['setReplyList', 'type', 'activeTab', 'title']);
 const { setLoadingState } = inject('appLoading', {
   loader: false,
   setLoadingState: (loading: boolean) => {}
 });
 const buttonRef = ref<HTMLElement | null>();
 const userInput = ref<HTMLElement | null>();
-console.log(props.type);
 
-// onMounted(() => {
-//   setTimeout(() => {
-//     userInput.value?.focus()
-//   }, 5000)
-// })
+const placeholder = computed(() => `Message PigGPT ⇔‌ ${props.title} `);
 
 document.onkeydown = function (e) {
   const key = (window as any).event.keyCode;
