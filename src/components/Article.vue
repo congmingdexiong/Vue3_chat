@@ -3,22 +3,24 @@
     <article>
       {{ item.content }}
     </article>
-     <div class="avatar_bot" style="margin-left:0.5rem;">
-      <img style="width: 2rem; height: 2rem;border-radius: 50%;" :src="userInformation.headimgurl"> </img>
+    <div class="avatar_bot" style="margin-left: 0.5rem">
+      <img
+        style="width: 2rem; height: 2rem; border-radius: 50%"
+        :src="userInformation.headimgurl"
+      />
     </div>
   </div>
   <div v-if="item.type === 'chat'" class="article article-bot-answer">
     <div class="avatar_bot">
       <PigIcon width="2rem" height="2rem" />
     </div>
-    <article>
-      {{ item.content }}
-    </article>
+    <article id="article" v-html="marked.parse(item.content)"></article>
   </div>
 </template>
 
 <script setup lang="ts" name="Article">
-const { item, userInformation } = defineProps(['item', 'userInformation'])
+import { marked } from 'marked';
+const { item, userInformation } = defineProps(['item', 'userInformation']);
 </script>
 
 <style scoped lang="scss">
@@ -70,5 +72,10 @@ article {
   padding-right: 1.25rem;
   padding-top: 0.625rem;
   display: inline-block;
+}
+@media screen and (max-width: 480px) {
+  article {
+    max-width: 300px;
+  }
 }
 </style>
