@@ -40,6 +40,12 @@ npm run build
 
 ### Lint with [ESLint](https://eslint.org/)
 
+IP穿刺：
+https://console.hsk.oray.com/home
+
+服务代理nginx
+https://nginx.org/
+
 Backend pro:
 https://github.com/congmingdexiong/vue3-chat-backend
 
