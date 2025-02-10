@@ -47,6 +47,7 @@ Login Process
 
 1. Login with scanning wechat 公众号
    ![登录界面1](示例图/LoginScanCode.png)
+   ![alt text](image.png)
 
 2. Login with authorizing wechat Info
    ![登录界面2](示例图/LoginAuthorize.png)
