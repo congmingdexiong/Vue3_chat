@@ -1,17 +1,46 @@
 <template>
-  <div class="chat-wrapper">
-    <div class="chat-content">
-      <div class="chat-content-middle">
-        <template v-for="(item, index) in replyList" v-bind:key="index">
-          <Article :item="item" :userInformation="userInformation"></Article>
-        </template>
+  <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+    <el-tab-pane label="DeepSeek" name="deepseek">
+      <div class="chat-wrapper">
+        <div class="chat-content">
+          <div class="chat-content-middle">
+            <template v-for="(item, index) in replyListDeepSeek" v-bind:key="index">
+              <Article :item="item" :userInformation="userInformation"></Article>
+            </template>
+          </div>
+        </div>
+        <div class="chat-translator">translator ongoing</div>
+        <div class="chat-input-area" ref="inputArea" tabindex="0">
+          <InputBox
+            :replyList="replyListDeepSeek"
+            :setReplyList="getReplyList"
+            type="deepseek"
+            :activeTab="activeTab"
+          ></InputBox>
+        </div>
       </div>
-    </div>
-    <div class="chat-translator">translator ongoing</div>
-    <div class="chat-input-area" ref="inputArea" tabindex="0">
-      <InputBox :replyList="replyList" :setReplyList="getReplyList"></InputBox>
-    </div>
-  </div>
+    </el-tab-pane>
+    <el-tab-pane label="Baidu" name="baidu">
+      <div class="chat-wrapper">
+        <div class="chat-content">
+          <div class="chat-content-middle">
+            <template v-for="(item, index) in replyListBaidu" v-bind:key="index">
+              <Article :item="item" :userInformation="userInformation"></Article>
+            </template>
+          </div>
+        </div>
+        <div class="chat-translator">translator ongoing</div>
+        <div class="chat-input-area" ref="inputArea" tabindex="0">
+          <InputBox
+            :replyList="replyListBaidu"
+            :setReplyList="getReplyList"
+            :activeTab="activeTab"
+            type="baidu"
+          ></InputBox>
+        </div>
+      </div>
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script setup lang="ts" name="ChatView">
@@ -19,14 +48,16 @@ import Article from '@/components/Article.vue';
 import InputBox from '@/components/InputBox.vue';
 import type { Reply } from '@/domain/Reply';
 import { getUserInfo } from '@/service/WeChatService';
-import { ElMessage } from 'element-plus';
+import { ElMessage, type TabsPaneContext } from 'element-plus';
 import { isEmpty } from 'lodash';
 import { onMounted, reactive, ref, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const inputArea = ref<HTMLElement | null>(null);
-const replyList = reactive<Reply[]>([]);
+const replyListBaidu = reactive<Reply[]>([]);
+const replyListDeepSeek = reactive<Reply[]>([]);
 const userInformation = ref({});
+const activeTab = ref('deepseek');
 
 onMounted(async () => {
   try {
@@ -38,18 +69,29 @@ onMounted(async () => {
       userInformation.value = userInfo;
       ElMessage.info(`您好~~尊敬的 ${userInfo.nickname},欢迎使用PigGpt!!`);
     }
+    userInformation.value = userInfo;
   } catch {
     ElMessage.error('用户信息不存在，请重新登录');
     router.push('/');
   }
 });
 
-function getReplyList(reply: Reply) {
-  replyList.push(reply);
+const activeName = ref('deepseek');
+
+const handleClick = (tab: TabsPaneContext, event: Event) => {
+  activeTab.value = String(tab.paneName) || '';
+};
+
+function getReplyList(reply: Reply, type: string) {
+  if (type === 'baidu') {
+    replyListBaidu.push(reply);
+  } else {
+    replyListDeepSeek.push(reply);
+  }
 }
 
 watchEffect(() => {
-  if (!isEmpty(replyList) && document.querySelector('.chat-content-middle')) {
+  if (!isEmpty(replyListDeepSeek) && document.querySelector('.chat-content-middle')) {
     setTimeout(() => {
       const element = document.querySelector('.chat-content-middle') as HTMLElement;
 
@@ -72,6 +114,15 @@ function getScrollHeight(element: HTMLElement | any) {
 </script>
 
 <style lang="scss">
+.demo-tabs {
+  height: 100%;
+  > .el-tabs__content {
+    > .el-tab-pane {
+      height: 100%;
+    }
+  }
+}
+
 .chat-wrapper {
   display: flex;
   flex-direction: column;

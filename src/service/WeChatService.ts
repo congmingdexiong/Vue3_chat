@@ -18,7 +18,7 @@ export const getChatDataDeepSeek = async (userMsg: string) => {
   });
 };
 export const getChatDataBaidu = async (userMsg: string) => {
-  return await AxiosInstance.post<null, { result: string }>('/api/deepseek', {
+  return await AxiosInstance.post<null, { result: string }>('/api/baidu', {
     userMsg: userMsg
   });
 };

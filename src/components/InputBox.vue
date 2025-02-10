@@ -5,6 +5,7 @@
     contenteditable="true"
     data-virtualkeyboard="true"
     placeholder="Message PigGPT"
+    :id="props.type"
     ref="userInput"
   ></div>
   <div class="chat-input-submit">
@@ -12,8 +13,8 @@
       ref="buttonRef"
       aria-label="Send prompt"
       data-testid="send-button"
-      @click="handleUserInput()"
-      @keydown.enter="handleUserInput()"
+      @click="handleUserInput(props.type)"
+      @keydown.enter="handleUserInput(props.type)"
     >
       <SubmitIco></SubmitIco>
     </button>
@@ -21,17 +22,18 @@
 </template>
 
 <script setup lang="ts" name="InputBox">
-import { inject, onMounted, ref } from 'vue'
-import { ElMessage } from 'element-plus'
-import {  getChatDataDeepSeek } from '@/service/WeChatService'
+import { inject, ref } from 'vue';
+import { ElMessage } from 'element-plus';
+import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/WeChatService';
 
-const props = defineProps(['setReplyList'])
+const props = defineProps(['setReplyList', 'type', 'activeTab']);
 const { setLoadingState } = inject('appLoading', {
   loader: false,
-  setLoadingState: (loading: boolean) => {},
-})
-const buttonRef = ref<HTMLElement | null>(null)
-const userInput = ref<HTMLElement | null>(null)
+  setLoadingState: (loading: boolean) => {}
+});
+const buttonRef = ref<HTMLElement | null>();
+const userInput = ref<HTMLElement | null>();
+console.log(props.type);
 
 // onMounted(() => {
 //   setTimeout(() => {
@@ -40,36 +42,46 @@ const userInput = ref<HTMLElement | null>(null)
 // })
 
 document.onkeydown = function (e) {
-  const key = (window as any).event.keyCode
+  const key = (window as any).event.keyCode;
   if (key === 13) {
-    handleUserInput()
+    handleUserInput(props.activeTab);
   }
-}
-async function handleUserInput() {
-  setLoadingState(true)
-  if (userInput?.value?.innerText) {
-    props.setReplyList({ type: 'user', content: userInput?.value?.innerText })
+};
+async function handleUserInput(type: string) {
+  setLoadingState(true);
+  if (document.getElementById(type)?.innerText) {
+    props.setReplyList({ type: 'user', content: document.getElementById(type)?.innerText }, type);
+
     try {
-      const axiosRes = await getChatDataDeepSeek(userInput?.value?.innerText)
-      props.setReplyList({ type: 'chat', content: axiosRes.result })
+      let axiosRes;
+      if (type === 'baidu') {
+        axiosRes = await getChatDataBaidu(document.getElementById(type)?.innerText?.trim() || '');
+      } else {
+        axiosRes = await getChatDataDeepSeek(
+          document.getElementById(type)?.innerText?.trim() || ''
+        );
+      }
+      props.setReplyList({ type: 'chat', content: axiosRes.result }, type);
     } catch (error) {
-      ElMessage.error(`程序错误！${error}`)
+      ElMessage.error(`程序错误！${error}`);
     } finally {
-      setLoadingState(false)
+      setLoadingState(false);
     }
 
     if (userInput.value) {
-      userInput.value.innerText = ''
+      document.getElementById(type)!.innerText = '';
     }
   } else {
-    setLoadingState(false)
-    ElMessage.error('您没有输入内容！！')
+    setLoadingState(false);
+    ElMessage.error('您没有输入内容！！');
   }
 }
 </script>
 
 <style scoped lang="scss">
 .chat-input-area-content-area {
+  overflow: auto;
+  padding-right: 2.5rem;
   &:focus {
     outline: none;
   }
@@ -84,6 +96,9 @@ async function handleUserInput() {
 }
 
 .chat-input-submit {
+  position: absolute;
+  bottom: 0;
+  right: 0;
   > button {
     height: 2rem;
     width: 2rem;

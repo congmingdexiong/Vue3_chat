@@ -66,6 +66,7 @@ watch(
   /* background-color: red; */
 }
 .el-main {
+  padding-top: 0;
   /* background-color: green; */
 }
 .el-aside {
