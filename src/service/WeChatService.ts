@@ -28,3 +28,8 @@ export const getUserInfo = async () => {
     '/wechat/userInfo'
   );
 };
+export const addTestDummyUser = async () => {
+  return await AxiosInstance.post<null, { nickname: string; headimgurl: string }>(
+    '/wechat/addUser'
+  );
+};

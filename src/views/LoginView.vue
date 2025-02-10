@@ -34,7 +34,6 @@ onMounted(async () => {
     } else {
       fetchQRCode();
     }
-    router.push('/chat');
   } catch {
     fetchQRCode();
   }
