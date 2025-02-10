@@ -46,14 +46,13 @@ https://github.com/congmingdexiong/vue3-chat-backend
 Login Process
 
 1. Login with scanning wechat 公众号
-   ![登录界面1](示例图/LoginScanCode.png)
-   ![alt text](image.png)
+   ![登录界面1](pic/LoginScanCode.png)
 
 2. Login with authorizing wechat Info
-   ![登录界面2](示例图/LoginAuthorize.png)
+   ![登录界面2](pic/LoginAuthorize.png)
 
 3. After Login:
 
-   ![alt text](示例图/deepseek.png)
+   ![alt text](pic/deepseek.png)
 
-   ![alt text](示例图/baiduQianFan.png)
+   ![alt text](pic/baiduQianFan.png)
