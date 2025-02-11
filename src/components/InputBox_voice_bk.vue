@@ -1,14 +1,18 @@
 ﻿<template>
   <textarea name="" id="" placeholder="MessageChatGPT" style="display: none"></textarea>
-  <div
-    class="chat-input-area-content-area"
-    contenteditable="true"
-    data-virtualkeyboard="true"
-    :placeholder="placeholder"
-    :id="props.type"
-    ref="userInput"
-  ></div>
-  <div class="chat-input-submit">
+  <!-- <div
+  class="chat-input-area-content-area"
+  contenteditable="true"
+  data-virtualkeyboard="true"
+  :placeholder="placeholder"
+  :id="props.type"
+  ref="userInput"
+  ></div> -->
+  <canvas id="recordCanvas" ref="record" style="height: 10px"></canvas>
+  <button @click="handleStart">record</button>
+  <button @click="handleStop">stop</button>
+  <button @click="handlePlay">play</button>
+  <!-- <div class="chat-input-submit">
     <button
       ref="buttonRef"
       aria-label="Send prompt"
@@ -18,13 +22,15 @@
     >
       <SubmitIco></SubmitIco>
     </button>
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts" name="InputBox">
 import { computed, inject, reactive, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/WeChatService';
+import Recorder from 'js-audio-recorder';
+// import Recorder from 'js-audio-recorder';
 
 const props = defineProps(['setReplyList', 'type', 'activeTab', 'title']);
 const { setLoadingState } = inject('appLoading', {
@@ -35,6 +41,37 @@ const buttonRef = ref<HTMLElement | null>();
 const userInput = ref<HTMLElement | null>();
 
 const placeholder = computed(() => `Message PigGPT ⇔‌ ${props.title} `);
+let recorder: any = null; //录音
+let drawRecordId: any = null;
+const drawPlayId = null;
+
+const handleStart = async () => {
+  const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+  console.log(mediaStream);
+
+  // 初始化 AudioContext 和 MediaStreamSource 对象
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const sourceNode = audioContext.createMediaStreamSource(mediaStream);
+  recorder = new Recorder(sourceNode.context);
+  // Recorder.getPermission().then(() => {
+  //   recorder.start().then(() => {
+  //     // this.drawRecord();
+  //   });
+  // });
+  recorder.start();
+  // recorder.start();
+};
+// 停止录音
+const handleStop = () => {
+  recorder.stop();
+  drawRecordId && cancelAnimationFrame(drawRecordId);
+  drawRecordId = null;
+};
+// 播放录音
+const handlePlay = () => {
+  recorder.play();
+};
 
 document.onkeydown = function (e) {
   const key = (window as any).event.keyCode;

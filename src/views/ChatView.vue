@@ -54,6 +54,7 @@ import { ElMessage, type TabsPaneContext } from 'element-plus';
 import { isEmpty } from 'lodash';
 import { onMounted, reactive, ref, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
+import emitter from '@/utils/emitter';
 const router = useRouter();
 const inputArea = ref<HTMLElement | null>(null);
 const replyListBaidu = reactive<Reply[]>([]);
@@ -69,6 +70,7 @@ onMounted(async () => {
       router.push('/');
     } else {
       userInformation.value = userInfo;
+      emitter.emit('sendUserInfo', userInfo);
       ElMessage.info(`您好~~尊敬的 ${userInfo.nickname},欢迎使用PigGpt!!`);
     }
     userInformation.value = userInfo;
