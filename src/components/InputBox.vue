@@ -52,7 +52,7 @@
 
 <script setup lang="ts" name="InputBox">
 import { computed, inject, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElNotification } from 'element-plus';
 import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/WeChatService';
 
 const props = defineProps(['setReplyList', 'type', 'activeTab', 'title']);
@@ -71,6 +71,18 @@ const placeholder = computed(() =>
     : `Message Baidu ⇔‌ ${props.title}`
 );
 const reasonerEnabled = ref(false);
+
+watch(
+  () => reasonerEnabled.value,
+  () => {
+    if (reasonerEnabled.value) {
+      ElNotification({
+        message: '目前，deepseek-reasoner服务存在不稳定的问题，有可能失败，请谅解！',
+        type: 'info'
+      });
+    }
+  }
+);
 
 onMounted(() => {
   // 添加事件监听
