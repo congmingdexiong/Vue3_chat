@@ -15,11 +15,19 @@
       <PigIcon width="2rem" height="2rem" />
     </div>
     <article id="article" v-html="marked.parse(item.content)"></article>
+    <div v-if="item.stat === 'error'" style="flex-grow: 0; padding-left: 3.5rem">
+      <el-tooltip class="box-item" effect="light" content="点击重新发送" placement="bottom">
+        <el-icon @click="emitter.emit('resend', item)" class="box-item" name="el-icon-refresh">
+          <Refresh />
+        </el-icon>
+      </el-tooltip>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts" name="Article">
 import { marked } from 'marked';
+import emitter from '@/utils/emitter';
 const { item, userInformation } = defineProps(['item', 'userInformation']);
 </script>
 
@@ -52,6 +60,7 @@ ul {
   align-items: center;
   line-height: 1.75;
   align-items: flex-start;
+  flex-wrap: wrap;
 
   &.article-my-query {
     justify-content: end;
@@ -62,6 +71,9 @@ ul {
   &.article-bot-answer {
     justify-content: start;
     margin-bottom: 1rem;
+    > article {
+      flex-basis: calc(100% - 2.5rem);
+    }
   }
 }
 

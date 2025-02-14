@@ -54,8 +54,9 @@
 import { computed, inject, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { ElMessage, ElNotification } from 'element-plus';
 import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/WeChatService';
+import emitter from '../utils/emitter';
 
-const props = defineProps(['setReplyList', 'type', 'activeTab', 'title']);
+const props = defineProps(['setReplyList', 'replyList', 'type', 'activeTab', 'title']);
 const { setLoadingState } = inject('appLoading', {
   loader: false,
   setLoadingState: (loading: boolean) => {}
@@ -71,6 +72,36 @@ const placeholder = computed(() =>
     : `Message Baidu ⇔‌ ${props.title}`
 );
 const reasonerEnabled = ref(false);
+
+emitter.on('resend', async () => {
+  setLoadingState(true);
+  const lastUserInput = props.replyList[props.replyList.length - 2]?.content;
+  props.setReplyList({ type: 'user', content: lastUserInput }, props.type);
+
+  try {
+    let axiosRes;
+    if (props.type === 'baidu') {
+      axiosRes = await getChatDataBaidu(lastUserInput || '');
+    } else {
+      axiosRes = await getChatDataDeepSeek(lastUserInput || '', {
+        enabledReasoner: reasonerEnabled.value
+      });
+    }
+    props.setReplyList({ type: 'chat', content: axiosRes?.result }, props.type);
+  } catch (error) {
+    props.setReplyList(
+      { type: 'chat', content: '服务器正在忙碌，请重试！', stat: 'error' },
+      props.type
+    );
+    ElMessage.error(`AI服务不稳定,请重试,程序错误：${error}`);
+  } finally {
+    setLoadingState(false);
+  }
+
+  if (userInput.value) {
+    document.getElementById(props.type)!.innerText = '';
+  }
+});
 
 watch(
   () => reasonerEnabled.value,
@@ -120,7 +151,11 @@ async function handleUserInput(type: string) {
       }
       props.setReplyList({ type: 'chat', content: axiosRes?.result }, type);
     } catch (error) {
-      ElMessage.error(`AI服务不稳定，请重试，程序错误：${error}`);
+      props.setReplyList(
+        { type: 'chat', content: '服务器正在忙碌，请重试！', stat: 'error' },
+        type
+      );
+      ElMessage.error(`AI服务不稳定,请重试,程序错误：${error}`);
     } finally {
       setLoadingState(false);
     }
