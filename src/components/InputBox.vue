@@ -108,7 +108,7 @@ async function handleUserInput(type: string) {
       }
       props.setReplyList({ type: 'chat', content: axiosRes?.result }, type);
     } catch (error) {
-      ElMessage.error(`程序错误！${error}`);
+      ElMessage.error(`AI服务不稳定，请重试，程序错误：${error}`);
     } finally {
       setLoadingState(false);
     }
