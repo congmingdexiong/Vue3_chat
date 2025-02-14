@@ -133,7 +133,7 @@ function getScrollHeight(element: HTMLElement | any) {
   height: 100%;
 
   .chat-content {
-    height: 90%;
+    height: 80%;
     overflow-y: scroll;
 
     .chat-content-middle {
@@ -158,7 +158,7 @@ function getScrollHeight(element: HTMLElement | any) {
     padding: 0.5rem;
     background-color: rgb(244, 244, 244);
     border-bottom-color: rgb(227, 227, 227);
-    height: 10%;
+    height: 20%;
     border-radius: 1.5rem;
     color: rgb(13, 13, 13);
     display: flex;

@@ -12,9 +12,15 @@ export const getQRCode = async (sceneId: string) => {
   return await AxiosInstance.get<null, string>(`/wxlogin/qrcode?sceneId=${sceneId}`);
 };
 
-export const getChatDataDeepSeek = async (userMsg: string) => {
+export const getChatDataDeepSeek = async (
+  userMsg: string,
+  opts: {
+    enabledReasoner: boolean;
+  }
+) => {
   return await AxiosInstance.post<null, { result: string }>('/api/deepseek', {
-    userMsg: userMsg
+    userMsg: userMsg,
+    opts
   });
 };
 export const getChatDataBaidu = async (userMsg: string) => {
