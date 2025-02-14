@@ -63,7 +63,13 @@ const { setLoadingState } = inject('appLoading', {
 const buttonRef = ref<HTMLElement | null>();
 const userInput = ref<HTMLElement | null>();
 
-const placeholder = computed(() => `Message PigGPT ⇔‌ ${props.title} `);
+const placeholder = computed(() =>
+  props.type === 'deepseek'
+    ? reasonerEnabled.value
+      ? `Message ⇔‌ ${props.title}-reasoner`
+      : `Message ⇔‌ ${props.title}-chat`
+    : `Message Baidu ⇔‌ ${props.title}`
+);
 const reasonerEnabled = ref(false);
 
 onMounted(() => {

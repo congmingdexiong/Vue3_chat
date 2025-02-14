@@ -16,7 +16,7 @@
             :setReplyList="getReplyList"
             type="deepseek"
             :activeTab="activeTab"
-            title="deepseek-chat"
+            title="deepseek"
           ></InputBox>
         </div>
       </div>
