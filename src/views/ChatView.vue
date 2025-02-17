@@ -70,10 +70,7 @@ const activeTab = ref('deepseek');
 onMounted(async () => {
   try {
     const userInfo = await getUserInfo();
-    if (isEmpty(userInfo.nickname)) {
-      ElMessage.error('用户信息不存在，请重新登录');
-      router.push('/');
-    } else {
+    if (!isEmpty(userInfo.nickname)) {
       userInformation.value = userInfo;
       emitter.emit('sendUserInfo', userInfo);
       ElMessage.info(`您好~~尊敬的 ${userInfo.nickname},欢迎使用PigGpt!!`);

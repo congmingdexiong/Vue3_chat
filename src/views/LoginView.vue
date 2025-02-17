@@ -17,25 +17,24 @@
 
 <script setup lang="ts" name="LoginView">
 import { ElMessage } from 'element-plus';
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { getQRCode, getSceneId, getStatus, getUserInfo } from '@/service/WeChatService';
 import { isEmpty } from 'lodash';
 const router = useRouter();
+const route = useRoute(); // 获取当前路由信息
+const currentPath = ref(route.path);
 const imageRef = ref();
 const sceneId = ref('');
 let checkStatusInterval: any;
 
 onMounted(async () => {
-  try {
-    const userInfo = await getUserInfo();
-    if (!isEmpty(userInfo.nickname)) {
-      router.push('/chat');
-    } else {
-      fetchQRCode();
-    }
-  } catch {
-    fetchQRCode();
+  fetchQRCode();
+});
+
+onUnmounted(() => {
+  if (checkStatusInterval) {
+    clearInterval(checkStatusInterval);
   }
 });
 
@@ -80,9 +79,10 @@ function startPolling() {
       if (status === 'success') {
         handleLoginSuccess();
       }
-      // if (status === 'fail') {
-      // keep checking status
-      // }
+      if (status === 'Not authorized') {
+        // 未授权
+        console.log('后端未授权');
+      }
     } catch (error) {
       console.error('检查状态失败：', error);
       if (checkStatusInterval) {
