@@ -109,6 +109,9 @@ async function handleUserInput(type: string) {
 async function handleUserInputFn(content: string, type: string) {
   setLoadingState(true);
   if (content) {
+    if (userInput.value) {
+      document.getElementById(props.type)!.innerText = '';
+    }
     props.setReplyList({ type: 'user', content }, type);
 
     try {
@@ -129,10 +132,6 @@ async function handleUserInputFn(content: string, type: string) {
       ElMessage.error(`AI服务不稳定,请重试,程序错误：${error}`);
     } finally {
       setLoadingState(false);
-    }
-
-    if (userInput.value) {
-      document.getElementById(props.type)!.innerText = '';
     }
   } else {
     setLoadingState(false);

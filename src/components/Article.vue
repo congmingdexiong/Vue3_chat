@@ -14,14 +14,10 @@
     <div class="avatar_bot">
       <PigIcon width="2rem" height="2rem" />
     </div>
-    <article
-      id="article"
-      v-html="marked.parse(item.content)"
-      @click.stop="emitter.emit('resend', item)"
-    ></article>
+    <article id="article" v-html="marked.parse(item.content)"></article>
     <div style="flex-grow: 0; padding-left: 3.5rem" v-if="item.stat === 'error'">
       <el-tooltip class="box-item" effect="light" content="点击重新发送" placement="bottom">
-        <el-icon class="box-item" name="el-icon-refresh">
+        <el-icon class="box-item" name="el-icon-refresh" @click.stop="emitter.emit('resend', item)">
           <Refresh />
         </el-icon>
       </el-tooltip>
