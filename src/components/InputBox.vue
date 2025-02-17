@@ -73,36 +73,6 @@ const placeholder = computed(() =>
 );
 const reasonerEnabled = ref(false);
 
-emitter.on('resend', async () => {
-  setLoadingState(true);
-  const lastUserInput = props.replyList[props.replyList.length - 2]?.content;
-  props.setReplyList({ type: 'user', content: lastUserInput }, props.type);
-
-  try {
-    let axiosRes;
-    if (props.type === 'baidu') {
-      axiosRes = await getChatDataBaidu(lastUserInput || '');
-    } else {
-      axiosRes = await getChatDataDeepSeek(lastUserInput || '', {
-        enabledReasoner: reasonerEnabled.value
-      });
-    }
-    props.setReplyList({ type: 'chat', content: axiosRes?.result }, props.type);
-  } catch (error) {
-    props.setReplyList(
-      { type: 'chat', content: '服务器正在忙碌，请重试！', stat: 'error' },
-      props.type
-    );
-    ElMessage.error(`AI服务不稳定,请重试,程序错误：${error}`);
-  } finally {
-    setLoadingState(false);
-  }
-
-  if (userInput.value) {
-    document.getElementById(props.type)!.innerText = '';
-  }
-});
-
 watch(
   () => reasonerEnabled.value,
   () => {
@@ -133,21 +103,22 @@ const handleKeydown = (e: KeyboardEvent) => {
 };
 
 async function handleUserInput(type: string) {
+  handleUserInputFn(userInput.value?.innerText || '', type);
+}
+
+async function handleUserInputFn(content: string, type: string) {
   setLoadingState(true);
-  if (document.getElementById(type)?.innerText) {
-    props.setReplyList({ type: 'user', content: document.getElementById(type)?.innerText }, type);
+  if (content) {
+    props.setReplyList({ type: 'user', content }, type);
 
     try {
       let axiosRes;
       if (type === 'baidu') {
-        axiosRes = await getChatDataBaidu(document.getElementById(type)?.innerText?.trim() || '');
+        axiosRes = await getChatDataBaidu(content?.trim() || '');
       } else {
-        axiosRes = await getChatDataDeepSeek(
-          document.getElementById(type)?.innerText?.trim() || '',
-          {
-            enabledReasoner: reasonerEnabled.value
-          }
-        );
+        axiosRes = await getChatDataDeepSeek(content?.trim() || '', {
+          enabledReasoner: reasonerEnabled.value
+        });
       }
       props.setReplyList({ type: 'chat', content: axiosRes?.result }, type);
     } catch (error) {
@@ -161,13 +132,20 @@ async function handleUserInput(type: string) {
     }
 
     if (userInput.value) {
-      document.getElementById(type)!.innerText = '';
+      document.getElementById(props.type)!.innerText = '';
     }
   } else {
     setLoadingState(false);
     ElMessage.error('您没有输入内容！！');
   }
 }
+
+emitter.on('resend', async () => {
+  if (props.type === props.activeTab) {
+    const lastUserInput = props.replyList[props.replyList.length - 2]?.content;
+    await handleUserInputFn(lastUserInput, props.type);
+  }
+});
 
 const enableReasoner = () => {
   reasonerEnabled.value = !reasonerEnabled.value;

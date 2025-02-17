@@ -5,7 +5,12 @@
         <div class="chat-content">
           <div class="chat-content-middle">
             <template v-for="(item, index) in replyListDeepSeek" v-bind:key="index">
-              <Article :item="item" :userInformation="userInformation"></Article>
+              <Article
+                :item="item"
+                :userInformation="userInformation"
+                type="deepseek"
+                :activeTab="activeTab"
+              ></Article>
             </template>
           </div>
         </div>
