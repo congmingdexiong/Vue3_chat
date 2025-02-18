@@ -14,7 +14,9 @@
     <div class="avatar_bot">
       <PigIcon width="2rem" height="2rem" />
     </div>
-    <article id="article" v-if="item.content" v-html="marked.parse(item.content)"></article>
+    <template v-if="item?.content">
+      <article id="article" v-html="marked.parse(item?.content)"></article>
+    </template>
     <div style="flex-grow: 0; padding-left: 3.5rem" v-if="item.stat === 'error'">
       <el-tooltip class="box-item" effect="light" content="点击重新发送" placement="bottom">
         <el-icon class="box-item" name="el-icon-refresh" @click.stop="emitter.emit('resend', item)">

@@ -1,6 +1,7 @@
 ﻿import axios from 'axios';
 import router from '../router/index';
 import { addTestDummyUser, getUserInfo } from '@/service/WeChatService';
+import { ElNotification } from 'element-plus';
 // 创建 Axios 实例
 const api = axios.create({
   timeout: 500000, // 请求超时时间
@@ -32,6 +33,10 @@ api.interceptors.request.use(
     ) {
       userInfoRes = await getUserInfo();
       if (userInfoRes?.nickname && router.currentRoute.value.fullPath === '/') {
+        ElNotification({
+          message: '您已登录成功，正在为您跳转',
+          type: 'info'
+        });
         router.push('/chat');
       }
     }
@@ -50,6 +55,10 @@ api.interceptors.response.use(
   response => {
     if (response.data === 'Not authorized') {
       if (router.currentRoute.value.path !== '/') {
+        ElNotification({
+          message: '未授权，请您重新登录',
+          type: 'info'
+        });
         router.push({ path: '/' });
       }
     } else {

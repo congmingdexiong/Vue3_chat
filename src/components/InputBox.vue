@@ -43,7 +43,7 @@
       ref="buttonRef"
       aria-label="Send prompt"
       data-testid="send-button"
-      @click="handleUserInput(props.type)"
+      @click="handleUserInput(props?.type)"
     >
       <SubmitIco></SubmitIco>
     </button>
