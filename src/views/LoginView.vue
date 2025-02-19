@@ -21,12 +21,15 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { getQRCode, getSceneId, getStatus, getUserInfo } from '@/service/WeChatService';
 import { isEmpty } from 'lodash';
+import { getConfig } from '@/config/app.config';
 const router = useRouter();
 const route = useRoute(); // 获取当前路由信息
 const currentPath = ref(route.path);
 const imageRef = ref();
 const sceneId = ref('');
 let checkStatusInterval: any;
+
+const env = getConfig().env;
 
 onMounted(async () => {
   fetchQRCode();
@@ -70,26 +73,29 @@ function startPolling() {
     clearInterval(checkStatusInterval);
   }
 
-  checkStatusInterval = setInterval(async () => {
-    try {
-      const response = await getStatus(sceneId.value);
-      const status = await response;
+  checkStatusInterval = setInterval(
+    async () => {
+      try {
+        const response = await getStatus(sceneId.value);
+        const status = await response;
 
-      console.log('登录状态是:', status);
-      if (status === 'success') {
-        handleLoginSuccess();
+        console.log('登录状态是:', status);
+        if (status === 'success') {
+          handleLoginSuccess();
+        }
+        if (status === 'Not authorized') {
+          // 未授权
+          console.log('后端未授权');
+        }
+      } catch (error) {
+        console.error('检查状态失败：', error);
+        if (checkStatusInterval) {
+          clearInterval(checkStatusInterval);
+        }
       }
-      if (status === 'Not authorized') {
-        // 未授权
-        console.log('后端未授权');
-      }
-    } catch (error) {
-      console.error('检查状态失败：', error);
-      if (checkStatusInterval) {
-        clearInterval(checkStatusInterval);
-      }
-    }
-  }, 2000);
+    },
+    env === 'dev' ? 2000 : 1000
+  );
 }
 </script>
 
