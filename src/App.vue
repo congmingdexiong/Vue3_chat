@@ -7,7 +7,7 @@
     size="90%"
   >
     <div class="drawer-container">
-      <div></div>
+      <Conversation></Conversation>
       <div class="drawer-avatar">
         <img
           style="width: 2rem; height: 2rem; border-radius: 50%"
@@ -39,6 +39,7 @@
 </template>
 
 <script setup lang="ts" name="App">
+import Conversation from './components/Conversation.vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { provide, ref, watch } from 'vue';
 import type { DrawerProps } from 'element-plus';
@@ -104,6 +105,12 @@ watch(
   }
 
   /* background-color: red; */
+}
+.el-drawer__header {
+  margin-bottom: 0;
+}
+.el-drawer__body {
+  padding-top: 0;
 }
 .el-main {
   padding-top: 0;
