@@ -1,4 +1,5 @@
 ﻿import type { Conversation, FormattedData } from '@/domain/Conversation';
+import { v4 as uuidv4 } from 'uuid';
 
 export function formatDataByDate(items: Conversation[]): FormattedData[] {
   const now = new Date();
@@ -46,3 +47,8 @@ const data = [
   { id: '6', label: '熊猪求饶插图', createdTime: '2025-01-03T09:58:31.482864300' },
   { id: '7', label: '提取文字内容', createdTime: '2025-01-01T09:58:31.482864300' }
 ];
+
+export const genderateUUID = () => {
+  const uuid = uuidv4();
+  return uuid;
+};

@@ -34,3 +34,10 @@ a,
     padding: 0 2rem;
   }
 } */
+.el-menu {
+  display: inline-block;
+  border-right: none !important;
+  .el-sub-menu__title {
+    height: 1rem !important;
+  }
+}

@@ -1,6 +1,6 @@
 ﻿import axios from 'axios';
 import router from '../router/index';
-import { addTestDummyUser, getUserInfo } from '@/service/WeChatService';
+import { addTestDummyUser, getUserInfo } from '@/service/chatService';
 import { ElNotification } from 'element-plus';
 // 创建 Axios 实例
 const api = axios.create({

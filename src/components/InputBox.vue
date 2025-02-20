@@ -53,7 +53,7 @@
 <script setup lang="ts" name="InputBox">
 import { computed, inject, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { ElMessage, ElNotification } from 'element-plus';
-import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/WeChatService';
+import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/chatService';
 import emitter from '../utils/emitter';
 
 const props = defineProps(['setReplyList', 'replyList', 'type', 'activeTab', 'title']);

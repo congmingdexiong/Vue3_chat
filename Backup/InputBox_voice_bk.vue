@@ -28,7 +28,7 @@
 <script setup lang="ts" name="InputBox">
 import { computed, inject, reactive, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/WeChatService';
+import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/chatService';
 import Recorder from 'js-audio-recorder';
 // import Recorder from 'js-audio-recorder';
 

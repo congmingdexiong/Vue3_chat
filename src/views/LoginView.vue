@@ -19,7 +19,7 @@
 import { ElMessage } from 'element-plus';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { getQRCode, getSceneId, getStatus, getUserInfo } from '@/service/WeChatService';
+import { getQRCode, getSceneId, getStatus, getUserInfo } from '@/service/chatService';
 import { isEmpty } from 'lodash';
 import { getConfig } from '@/config/app.config';
 const router = useRouter();

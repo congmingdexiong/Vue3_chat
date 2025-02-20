@@ -54,18 +54,20 @@
 import Article from '@/components/Article.vue';
 import InputBox from '@/components/InputBox.vue';
 import type { Reply } from '@/domain/Reply';
-import { getUserInfo } from '@/service/WeChatService';
+import { getUserInfo } from '@/service/chatService';
 import { ElMessage, type TabsPaneContext } from 'element-plus';
 import { isEmpty } from 'lodash';
 import { onMounted, reactive, ref, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import emitter from '@/utils/emitter';
+import { useConversationStore } from '@/stores/conversation';
 const router = useRouter();
 const inputArea = ref<HTMLElement | null>(null);
 const replyListBaidu = reactive<Reply[]>([]);
 const replyListDeepSeek = reactive<Reply[]>([]);
 const userInformation = ref({});
 const activeTab = ref('deepseek');
+const conversationStore = useConversationStore();
 
 onMounted(async () => {
   try {
@@ -75,11 +77,27 @@ onMounted(async () => {
       emitter.emit('sendUserInfo', userInfo);
       ElMessage.info(`您好~~尊敬的 ${userInfo.nickname},欢迎使用PigGpt!!`);
     }
+    conversationStore.addAllConversations(userInfo.conversations);
     userInformation.value = userInfo;
   } catch {
     ElMessage.error('用户信息不存在，请重新登录');
     router.push('/');
   }
+
+  emitter.on('reloadUserInfo', async () => {
+    try {
+      const userInfo = await getUserInfo();
+      if (!isEmpty(userInfo.nickname)) {
+        userInformation.value = userInfo;
+        emitter.emit('sendUserInfo', userInfo);
+      }
+      conversationStore.addAllConversations(userInfo.conversations);
+      userInformation.value = userInfo;
+    } catch {
+      ElMessage.error('用户信息不存在，请重新登录');
+      router.push('/');
+    }
+  });
 });
 
 const activeName = ref('deepseek');
