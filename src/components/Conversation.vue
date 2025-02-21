@@ -5,9 +5,9 @@
     <div class="new-conversation">
       <el-button
         @click="createConversation"
-        size="large"
+        size="normal"
         type="primary"
-        style="width: 8rem; display: flex; justify-content: space-between"
+        style="width: 7rem; display: flex; justify-content: space-between"
         plain
       >
         <NewChatConversation />

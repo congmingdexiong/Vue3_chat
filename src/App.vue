@@ -29,8 +29,8 @@
           PigGpt
           <el-icon><ArrowDown /></el-icon>
         </div>
-        <div class="edit-setting">
-          <Edit style="width: 1.5rem; height: 1.5rem; margin-right: 8px" />
+        <div class="edit-setting" @click="createConversation">
+          <NewChatConversation />
         </div>
       </el-header>
       <el-main><RouterView /> </el-main>
@@ -44,13 +44,17 @@ import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { provide, ref, watch } from 'vue';
 import type { DrawerProps } from 'element-plus';
 import emitter from './utils/emitter';
+import { genderateUUID } from './utils/app.utils';
+import { useConversationStore } from './stores/conversation';
+import type { Conversation as ConversationEntity } from '@/domain/Conversation';
+import { newConversation } from './service/chatService';
 const route = useRoute(); // 获取当前路由信息
 const currentPath = ref(route.path); // 存储当前路径的响应式引用
 const drawer = ref(false);
 const direction = ref<DrawerProps['direction']>('ltr');
 const userInformation = ref({} as any);
 const loader = ref(false);
-
+const conversationStore = useConversationStore();
 emitter.on('sendUserInfo', (value: any) => {
   userInformation.value = value;
   console.log(userInformation.value);
@@ -61,6 +65,21 @@ const setLoadingState = (loading: boolean) => {
 provide('appLoading', { loader, setLoadingState });
 const handleSelect = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);
+};
+
+const createConversation = async () => {
+  const uuid = genderateUUID();
+  const conversationTem = {
+    id: uuid,
+    aiType: 'deepseek-chat'
+  } as ConversationEntity;
+
+  conversationStore.addActiveConversation(conversationTem);
+
+  //success - 1 fail - -1
+  await newConversation(conversationTem);
+  emitter.emit('reloadUserInfo');
+  emitter.emit('resetChatChain');
 };
 
 const handleClose = (done: () => void) => {

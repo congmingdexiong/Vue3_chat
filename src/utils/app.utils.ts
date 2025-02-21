@@ -29,7 +29,10 @@ export function formatDataByDate(items: Conversation[]): FormattedData[] {
   });
 
   return Object.entries(categories)
-    .map(([date, content]) => ({ date, content }))
+    .map(([date, content]) => ({
+      date,
+      content: content.sort((a, b) => b.createdTime.localeCompare(a.createdTime))
+    }))
     .filter(entry => entry.content.length > 0);
 }
 
