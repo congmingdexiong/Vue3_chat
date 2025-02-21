@@ -1,10 +1,18 @@
 ﻿<!-- eslint-disable vue/no-use-v-if-with-v-for -->
 <template>
   <div class="nav-container">
+    <h2 class="nav-logo">PigGpt</h2>
     <div class="new-conversation">
-      <el-button @click="createConversation" size="large" type="primary" style="width: 5rem" plain
-        >新对话</el-button
+      <el-button
+        @click="createConversation"
+        size="large"
+        type="primary"
+        style="width: 8rem; display: flex; justify-content: space-between"
+        plain
       >
+        <NewChatConversation />
+        <div style="margin-left: 0.5rem">新对话</div>
+      </el-button>
     </div>
     <div
       class="nav-wrapper"
@@ -146,6 +154,11 @@ const deleteConversation = async (conversation: Conversation) => {
 .nav-container {
   height: 95%;
   overflow: scroll;
+  .nav-logo {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
   .new-conversation {
     justify-content: center;
   }
