@@ -20,10 +20,13 @@ export const getChatDataDeepSeek = async (
     conversationId?: string;
   }
 ) => {
-  return await AxiosInstance.post<null, { result: string }>('/api/deepseek', {
-    userMsg: userMsg,
-    opts
-  });
+  return await AxiosInstance.post<null, { result: string; conversation: Conversation }>(
+    '/api/deepseek',
+    {
+      userMsg: userMsg,
+      opts
+    }
+  );
 };
 
 export const getChatDataBaidu = async (
@@ -32,10 +35,13 @@ export const getChatDataBaidu = async (
     conversationId: string;
   }
 ) => {
-  return await AxiosInstance.post<null, { result: string }>('/api/baidu', {
-    userMsg: userMsg,
-    opts
-  });
+  return await AxiosInstance.post<null, { result: string; conversation: Conversation }>(
+    '/api/baidu',
+    {
+      userMsg: userMsg,
+      opts
+    }
+  );
 };
 
 export const getUserInfo = async () => {

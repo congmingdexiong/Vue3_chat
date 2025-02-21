@@ -40,6 +40,7 @@ api.interceptors.request.use(
         router.push('/chat');
       }
     }
+
     // 在发送请求之前做些什么，例如添加Token
     // config.headers.Authorization = `Bearer ${token}`;
     return config;

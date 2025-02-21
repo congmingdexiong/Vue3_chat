@@ -63,8 +63,8 @@ import emitter from '@/utils/emitter';
 import { useConversationStore } from '@/stores/conversation';
 const router = useRouter();
 const inputArea = ref<HTMLElement | null>(null);
-const replyListBaidu = reactive<Reply[]>([]);
-const replyListDeepSeek = reactive<Reply[]>([]);
+let replyListBaidu = reactive<Reply[]>([]);
+let replyListDeepSeek = reactive<Reply[]>([]);
 const userInformation = ref({});
 const activeTab = ref('deepseek');
 const conversationStore = useConversationStore();
@@ -97,6 +97,11 @@ onMounted(async () => {
       ElMessage.error('用户信息不存在，请重新登录');
       router.push('/');
     }
+  });
+
+  emitter.on('resetChatChain', () => {
+    replyListBaidu = [];
+    replyListDeepSeek = [];
   });
 });
 

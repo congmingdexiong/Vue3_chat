@@ -34,10 +34,15 @@
           <el-icon size="20" @click="cancelChangingLabel(conversation)"><Close /></el-icon>
         </div>
 
-        <el-menu ref="menu" :collapse="isCollapse" class="el-menu-vertical-demo nav-menu-show">
+        <el-menu
+          ref="menu"
+          @click.stop="handleClick"
+          :collapse="isCollapse"
+          class="el-menu-vertical-demo nav-menu-show"
+        >
           <!-- @open="handleOpen"
           @close="handleClose" -->
-          <el-sub-menu :index="conversation.id">
+          <el-sub-menu :index="conversation.id" @click.stop="handleClick">
             <template #title>
               <el-icon size="20"><MoreFilled /></el-icon>
             </template>
@@ -102,7 +107,10 @@ const createConversation = async () => {
   //success - 1 fail - -1
   await newConversation(conversationTem);
   emitter.emit('reloadUserInfo');
+  emitter.emit('resetChatChain');
 };
+
+const handleClick = () => {};
 
 const setActiveConversation = (conversation: Conversation) => {
   conversationStore.addActiveConversation(conversation);

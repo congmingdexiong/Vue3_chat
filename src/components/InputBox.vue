@@ -55,6 +55,9 @@ import { computed, inject, onMounted, onUnmounted, reactive, ref, watch } from '
 import { ElMessage, ElNotification } from 'element-plus';
 import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/chatService';
 import emitter from '../utils/emitter';
+import { useConversationStore } from '@/stores/conversation';
+import { genderateUUID } from '@/utils/app.utils';
+import type { Conversation } from '@/domain/Conversation';
 
 const props = defineProps(['setReplyList', 'replyList', 'type', 'activeTab', 'title']);
 const { setLoadingState } = inject('appLoading', {
@@ -72,6 +75,7 @@ const placeholder = computed(() =>
     : `Message Baidu ⇔‌ ${props.title}`
 );
 const reasonerEnabled = ref(false);
+const conversationStore = useConversationStore();
 
 watch(
   () => reasonerEnabled.value,
@@ -116,13 +120,19 @@ async function handleUserInputFn(content: string, type: string) {
 
     try {
       let axiosRes;
+      const uuid = genderateUUID();
       if (type === 'baidu') {
-        axiosRes = await getChatDataBaidu(content?.trim() || '');
+        axiosRes = await getChatDataBaidu(content?.trim() || '', {
+          conversationId: conversationStore.selectedConversation?.id || uuid
+        });
       } else {
         axiosRes = await getChatDataDeepSeek(content?.trim() || '', {
-          enabledReasoner: reasonerEnabled.value
+          enabledReasoner: reasonerEnabled.value,
+          conversationId: conversationStore.selectedConversation?.id || uuid
         });
       }
+      conversationStore.addActiveConversation(axiosRes?.conversation);
+      emitter.emit('reloadUserInfo');
       props.setReplyList({ type: 'chat', content: axiosRes?.result }, type);
     } catch (error) {
       props.setReplyList(
