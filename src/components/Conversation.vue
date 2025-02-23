@@ -85,6 +85,7 @@ import {
   deleteConversation as deleteConversationById,
   updateConversation as updateConversationById
 } from '@/service/chatService';
+import { useChatStore } from '@/stores/chat';
 import { useConversationStore } from '@/stores/conversation';
 import { genderateUUID } from '@/utils/app.utils';
 import emitter from '@/utils/emitter';
@@ -101,6 +102,7 @@ const backupConversation = ref();
 //   console.log(key, keyPath);
 // };
 const conversationStore = useConversationStore();
+const chatStore = useChatStore();
 const { allGroupedConversations } = storeToRefs(conversationStore);
 
 const createConversation = async () => {

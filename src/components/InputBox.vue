@@ -57,7 +57,8 @@ import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/chatService';
 import emitter from '../utils/emitter';
 import { useConversationStore } from '@/stores/conversation';
 import { genderateUUID } from '@/utils/app.utils';
-import type { Conversation } from '@/domain/Conversation';
+import { useChatStore } from '@/stores/chat';
+import { storeToRefs } from 'pinia';
 
 const props = defineProps(['setReplyList', 'replyList', 'type', 'activeTab', 'title']);
 const { setLoadingState } = inject('appLoading', {
@@ -66,6 +67,8 @@ const { setLoadingState } = inject('appLoading', {
 });
 const buttonRef = ref<HTMLElement | null>();
 const userInput = ref<HTMLElement | null>();
+const chatStore = useChatStore();
+// const { activeAiType } = storeToRefs(chatStore);
 
 const placeholder = computed(() =>
   props.type === 'deepseek'
@@ -76,6 +79,10 @@ const placeholder = computed(() =>
 );
 const reasonerEnabled = ref(false);
 const conversationStore = useConversationStore();
+
+const componentConversation = ref();
+
+const emit = defineEmits(['send-componentConversation']);
 
 watch(
   () => reasonerEnabled.value,
@@ -121,16 +128,26 @@ async function handleUserInputFn(content: string, type: string) {
     try {
       let axiosRes;
       const uuid = genderateUUID();
+      const conversationId = conversationStore.selectedConversation?.id || uuid;
+      console.log('前端active conversation:', conversationId);
+
       if (type === 'baidu') {
         axiosRes = await getChatDataBaidu(content?.trim() || '', {
-          conversationId: conversationStore.selectedConversation?.id || uuid
+          conversationId,
+          aiType: props.type
         });
+        chatStore.addActiveAiType(props.type);
       } else {
+        const aiType = reasonerEnabled.value ? 'deepseek-reasoner' : 'deepseek-chat';
         axiosRes = await getChatDataDeepSeek(content?.trim() || '', {
           enabledReasoner: reasonerEnabled.value,
-          conversationId: conversationStore.selectedConversation?.id || uuid
+          conversationId,
+          aiType
         });
+        chatStore.addActiveAiType(aiType);
       }
+      componentConversation.value = axiosRes?.conversation;
+      emitter.emit('send-componentConversation', axiosRes?.conversation);
       conversationStore.addActiveConversation(axiosRes?.conversation);
       emitter.emit('reloadUserInfo');
       props.setReplyList({ type: 'chat', content: axiosRes?.result }, type);
@@ -158,7 +175,15 @@ emitter.on('resend', async () => {
 
 const enableReasoner = () => {
   reasonerEnabled.value = !reasonerEnabled.value;
+  if (props.type === 'baidu') {
+    chatStore.addActiveAiType(props.type);
+  } else {
+    const aiType = reasonerEnabled.value ? 'deepseek-reasoner' : 'deepseek-chat';
+    chatStore.addActiveAiType(aiType);
+  }
 };
+
+defineExpose({ componentConversation });
 </script>
 
 <style scoped lang="scss">

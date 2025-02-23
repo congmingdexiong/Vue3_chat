@@ -10,6 +10,7 @@
                 :userInformation="userInformation"
                 type="deepseek"
                 :activeTab="activeTab"
+                @send-componentConversation="getComponentConversation"
               ></Article>
             </template>
           </div>
@@ -17,11 +18,13 @@
         <div class="chat-translator">translator ongoing</div>
         <div class="chat-input-area" ref="inputArea" tabindex="0">
           <InputBox
+            ref="inputDeep"
             :replyList="replyListDeepSeek"
             :setReplyList="getReplyList"
             type="deepseek"
             :activeTab="activeTab"
             title="deepseek"
+            @send-componentConversation="getComponentConversation"
           ></InputBox>
         </div>
       </div>
@@ -38,6 +41,7 @@
         <div class="chat-translator">translator ongoing</div>
         <div class="chat-input-area" ref="inputArea" tabindex="0">
           <InputBox
+            ref="inputBaidu"
             :replyList="replyListBaidu"
             :setReplyList="getReplyList"
             :activeTab="activeTab"
@@ -61,6 +65,8 @@ import { onMounted, reactive, ref, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import emitter from '@/utils/emitter';
 import { useConversationStore } from '@/stores/conversation';
+import { useChatStore } from '@/stores/chat';
+import type { Conversation } from '@/domain/Conversation';
 const router = useRouter();
 const inputArea = ref<HTMLElement | null>(null);
 let replyListBaidu = reactive<Reply[]>([]);
@@ -68,6 +74,10 @@ let replyListDeepSeek = reactive<Reply[]>([]);
 const userInformation = ref({});
 const activeTab = ref('deepseek');
 const conversationStore = useConversationStore();
+const componentConversation = ref();
+
+const inputDeep = ref();
+const inputBaidu = ref();
 
 onMounted(async () => {
   try {
@@ -106,9 +116,33 @@ onMounted(async () => {
 });
 
 const activeName = ref('deepseek');
+const chatStore = useChatStore();
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   activeTab.value = String(tab.paneName) || '';
+  chatStore.addActiveAiType(activeTab.value === 'deepseek' ? 'deepseek-chat' : 'baidu');
+
+  if (activeTab.value === 'deepseek') {
+    console.log('当前click deepseek tab, id:', inputDeep.value.componentConversation);
+    if (!inputDeep.value.componentConversation?.id) {
+      conversationStore.addActiveConversation({} as Conversation);
+    } else {
+      conversationStore.addActiveConversation(inputDeep.value.componentConversation);
+    }
+  }
+
+  if (activeTab.value === 'baidu') {
+    console.log('当前click baidu tab, id:', inputBaidu.value.componentConversation);
+    if (!inputBaidu.value.componentConversation?.id) {
+      conversationStore.addActiveConversation({} as Conversation);
+    } else {
+      conversationStore.addActiveConversation(inputBaidu.value.componentConversation);
+    }
+  }
+};
+
+const getComponentConversation = (conversation: Conversation) => {
+  componentConversation.value = conversation;
 };
 
 function getReplyList(reply: Reply, type: string) {

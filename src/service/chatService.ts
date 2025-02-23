@@ -18,6 +18,7 @@ export const getChatDataDeepSeek = async (
   opts: {
     enabledReasoner: boolean;
     conversationId?: string;
+    aiType: string;
   }
 ) => {
   return await AxiosInstance.post<null, { result: string; conversation: Conversation }>(
@@ -33,6 +34,7 @@ export const getChatDataBaidu = async (
   userMsg: string,
   opts?: {
     conversationId: string;
+    aiType: string;
   }
 ) => {
   return await AxiosInstance.post<null, { result: string; conversation: Conversation }>(

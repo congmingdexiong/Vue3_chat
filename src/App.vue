@@ -57,7 +57,6 @@ const loader = ref(false);
 const conversationStore = useConversationStore();
 emitter.on('sendUserInfo', (value: any) => {
   userInformation.value = value;
-  console.log(userInformation.value);
 });
 const setLoadingState = (loading: boolean) => {
   loader.value = loading;
