@@ -25,7 +25,7 @@
         class="nav-content"
         v-for="conversation in item.content"
         :key="conversation.id"
-        @click="setActiveConversation(conversation)"
+        @click.stop="setActiveConversation(conversation)"
       >
         <div class="nav-content-label-wrapper" v-if="!conversation.editStatus">
           <div style="margin-right: 0.5rem">
@@ -52,7 +52,12 @@
           </div>
         </div>
 
-        <input type="text" v-model="conversation.label" v-if="conversation.editStatus" />
+        <input
+          type="text"
+          v-model="conversation.label"
+          @click.stop="handleInputClick"
+          v-if="conversation.editStatus"
+        />
         <div v-if="conversation.editStatus">
           <el-icon
             size="20"
@@ -146,6 +151,7 @@ const createConversation = async () => {
 };
 
 const handleClick = () => {};
+const handleInputClick = () => {};
 
 const setActiveConversation = async (conversation: Conversation) => {
   chatStore.addActiveAiType(conversation.aiType);

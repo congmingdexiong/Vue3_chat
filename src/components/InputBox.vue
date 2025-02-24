@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts" name="InputBox">
-import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, inject, onMounted, onUnmounted, ref, watch, watchEffect } from 'vue';
 import { ElMessage, ElNotification } from 'element-plus';
 import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/chatService';
 import emitter from '../utils/emitter';
@@ -61,6 +61,7 @@ import { useChatStore } from '@/stores/chat';
 import { useUserStore } from '@/stores/user';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 
 const props = defineProps(['setReplyList', 'replyList', 'type', 'activeTab', 'title']);
 const { setLoadingState } = inject('appLoading', {
@@ -70,6 +71,8 @@ const { setLoadingState } = inject('appLoading', {
 const buttonRef = ref<HTMLElement | null>();
 const userInput = ref<HTMLElement | null>();
 const chatStore = useChatStore();
+
+const { activeAiType } = storeToRefs(chatStore);
 
 const placeholder = computed(() =>
   props.type === 'deepseek'
@@ -87,6 +90,14 @@ const emit = defineEmits(['sendComponentConversation']);
 const router = useRouter();
 
 const userStore = useUserStore();
+
+watchEffect(() => {
+  if (activeAiType.value === 'deepseek-reasoner') {
+    reasonerEnabled.value = true;
+  } else {
+    reasonerEnabled.value = false;
+  }
+});
 
 watch(
   () => reasonerEnabled.value,

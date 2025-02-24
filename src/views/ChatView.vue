@@ -79,7 +79,7 @@ const userStore = useUserStore();
 const inputDeep = ref();
 const inputBaidu = ref();
 const { userInformation } = storeToRefs(userStore);
-const { replyListBaidu, replyListDeepSeek } = storeToRefs(chatStore);
+const { replyListBaidu, replyListDeepSeek, activeAiType } = storeToRefs(chatStore);
 const emit = defineEmits(['send-componentConversation']);
 
 onMounted(async () => {
@@ -97,7 +97,11 @@ onMounted(async () => {
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   activeTab.value = String(tab.paneName) || '';
-  chatStore.addActiveAiType(activeTab.value === 'deepseek' ? 'deepseek-chat' : 'baidu');
+  if (activeAiType.value === 'deepseek-reasoner') {
+    chatStore.addActiveAiType('deepseek-reasoner');
+  } else {
+    chatStore.addActiveAiType(activeTab.value === 'deepseek' ? 'deepseek-chat' : 'baidu');
+  }
 
   if (activeTab.value === 'deepseek') {
     console.log('当前click deepseek tab, id:', inputDeep.value.componentConversation);
