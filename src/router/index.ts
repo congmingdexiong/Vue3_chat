@@ -9,17 +9,17 @@ const router = createRouter({
     {
       path: '/',
       name: 'Login',
-      component: () => Login
+      component: () => Promise.resolve(Login)
     },
     {
       path: '/chat',
       name: 'Chat',
-      component: () => ChatView
+      component: () => Promise.resolve(ChatView)
     },
     {
       path: '/authenticate',
       name: 'Authenticate',
-      component: () => LoginAuthenticate
+      component: () => Promise.resolve(LoginAuthenticate)
     },
     {
       path: '/:catchAll(.*)*',
