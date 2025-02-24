@@ -18,13 +18,10 @@
 <script setup lang="ts" name="LoginView">
 import { ElMessage } from 'element-plus';
 import { onMounted, onUnmounted, ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { getQRCode, getSceneId, getStatus, getUserInfo } from '@/service/chatService';
-import { isEmpty } from 'lodash';
+import { useRouter } from 'vue-router';
+import { getQRCode, getSceneId, getStatus } from '@/service/chatService';
 import { getConfig } from '@/config/app.config';
 const router = useRouter();
-const route = useRoute(); // 获取当前路由信息
-const currentPath = ref(route.path);
 const imageRef = ref();
 const sceneId = ref('');
 let checkStatusInterval: any;
