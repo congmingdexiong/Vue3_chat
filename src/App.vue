@@ -48,6 +48,7 @@ import { genderateUUID } from './utils/app.utils';
 import { useConversationStore } from './stores/conversation';
 import type { Conversation as ConversationEntity } from '@/domain/Conversation';
 import { newConversation } from './service/chatService';
+import { useChatStore } from './stores/chat';
 const route = useRoute(); // 获取当前路由信息
 const currentPath = ref(route.path); // 存储当前路径的响应式引用
 const drawer = ref(false);
@@ -55,6 +56,7 @@ const direction = ref<DrawerProps['direction']>('ltr');
 const userInformation = ref({} as any);
 const loader = ref(false);
 const conversationStore = useConversationStore();
+const chatStore = useChatStore();
 emitter.on('sendUserInfo', (value: any) => {
   userInformation.value = value;
 });
@@ -78,7 +80,8 @@ const createConversation = async () => {
   //success - 1 fail - -1
   await newConversation(conversationTem);
   emitter.emit('reloadUserInfo');
-  emitter.emit('resetChatChain');
+  chatStore.clearReplyListBaidu();
+  chatStore.clearReplyListDeepseek();
 };
 
 const handleClose = (done: () => void) => {

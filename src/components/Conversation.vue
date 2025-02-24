@@ -95,12 +95,6 @@ const menu = ref();
 const isCollapse = ref(true);
 const backupConversation = ref();
 
-// const handleOpen = (key: string, keyPath: string[]) => {
-//   console.log(key, keyPath);
-// };
-// const handleClose = (key: string, keyPath: string[]) => {
-//   console.log(key, keyPath);
-// };
 const conversationStore = useConversationStore();
 const chatStore = useChatStore();
 const { allGroupedConversations } = storeToRefs(conversationStore);
@@ -117,7 +111,8 @@ const createConversation = async () => {
   //success - 1 fail - -1
   await newConversation(conversationTem);
   emitter.emit('reloadUserInfo');
-  emitter.emit('resetChatChain');
+  chatStore.clearReplyListBaidu();
+  chatStore.clearReplyListDeepseek();
 };
 
 const handleClick = () => {};

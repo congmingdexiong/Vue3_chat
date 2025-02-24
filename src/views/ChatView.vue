@@ -67,14 +67,16 @@ import emitter from '@/utils/emitter';
 import { useConversationStore } from '@/stores/conversation';
 import { useChatStore } from '@/stores/chat';
 import type { Conversation } from '@/domain/Conversation';
+import { storeToRefs } from 'pinia';
 const router = useRouter();
 const inputArea = ref<HTMLElement | null>(null);
-let replyListBaidu = reactive<Reply[]>([]);
-let replyListDeepSeek = reactive<Reply[]>([]);
 const userInformation = ref({});
 const activeTab = ref('deepseek');
+const activeName = ref('deepseek');
 const conversationStore = useConversationStore();
 const componentConversation = ref();
+const chatStore = useChatStore();
+const { replyListBaidu, replyListDeepSeek } = storeToRefs(chatStore);
 
 const inputDeep = ref();
 const inputBaidu = ref();
@@ -108,15 +110,7 @@ onMounted(async () => {
       router.push('/');
     }
   });
-
-  emitter.on('resetChatChain', () => {
-    replyListBaidu = [];
-    replyListDeepSeek = [];
-  });
 });
-
-const activeName = ref('deepseek');
-const chatStore = useChatStore();
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   activeTab.value = String(tab.paneName) || '';
@@ -147,9 +141,9 @@ const getComponentConversation = (conversation: Conversation) => {
 
 function getReplyList(reply: Reply, type: string) {
   if (type === 'baidu') {
-    replyListBaidu.push(reply);
+    chatStore.addReplyListBaidu(reply);
   } else {
-    replyListDeepSeek.push(reply);
+    chatStore.addReplyListDeepseek(reply);
   }
 }
 
