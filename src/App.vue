@@ -23,7 +23,7 @@
       <el-header>
         <!-- <RouterLink to="/">PigChat</RouterLink> -->
         <div class="config-setting" @click="drawer = true">
-          <Operation style="width: 1.5rem; height: 1.5rem; margin-right: 8px" />
+          <el-icon size="23" style="margin-right: 8px"><Operation /></el-icon>
         </div>
         <div>
           PigGpt

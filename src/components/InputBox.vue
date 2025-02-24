@@ -83,7 +83,7 @@ const conversationStore = useConversationStore();
 
 const componentConversation = ref();
 
-const emit = defineEmits(['send-componentConversation']);
+const emit = defineEmits(['sendComponentConversation']);
 const router = useRouter();
 
 const userStore = useUserStore();
@@ -151,7 +151,7 @@ async function handleUserInputFn(content: string, type: string) {
         chatStore.addActiveAiType(aiType);
       }
       componentConversation.value = axiosRes?.conversation;
-      emitter.emit('send-componentConversation', axiosRes?.conversation);
+      emit('sendComponentConversation', axiosRes?.conversation);
       conversationStore.addActiveConversation(axiosRes?.conversation);
       reloadUserInfo();
       props.setReplyList({ type: 'chat', content: axiosRes?.result }, type);

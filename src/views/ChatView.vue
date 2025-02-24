@@ -10,7 +10,6 @@
                 :userInformation="userInformation"
                 type="deepseek"
                 :activeTab="activeTab"
-                @send-componentConversation="getComponentConversation"
               ></Article>
             </template>
           </div>
@@ -24,7 +23,7 @@
             type="deepseek"
             :activeTab="activeTab"
             title="deepseek"
-            @send-componentConversation="getComponentConversation"
+            @sendComponentConversation="getComponentConversation"
           ></InputBox>
         </div>
       </div>
@@ -47,6 +46,7 @@
             :activeTab="activeTab"
             type="baidu"
             title="ERNIE-4.0-8K"
+            @sendComponentConversation="getComponentConversation"
           ></InputBox>
         </div>
       </div>
@@ -80,6 +80,7 @@ const inputDeep = ref();
 const inputBaidu = ref();
 const { userInformation } = storeToRefs(userStore);
 const { replyListBaidu, replyListDeepSeek } = storeToRefs(chatStore);
+const emit = defineEmits(['send-componentConversation']);
 
 onMounted(async () => {
   try {

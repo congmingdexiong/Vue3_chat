@@ -5,7 +5,7 @@
     <div class="new-conversation">
       <el-button
         @click="createConversation"
-        size="normal"
+        size="default"
         type="primary"
         style="width: 7rem; display: flex; justify-content: space-between"
         plain
