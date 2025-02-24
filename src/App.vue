@@ -1,6 +1,6 @@
 <template>
   <el-drawer
-    v-model="drawer"
+    v-model="activeDrawer"
     title=""
     :direction="direction"
     :before-close="handleClose"
@@ -22,10 +22,10 @@
     <el-container>
       <el-header>
         <!-- <RouterLink to="/">PigChat</RouterLink> -->
-        <div class="config-setting" @click="drawer = true">
+        <div class="config-setting" @click="uiConfigStore.toggleActiveDrawer(true)">
           <el-icon size="23" style="margin-right: 8px"><Operation /></el-icon>
         </div>
-        <div>
+        <div style="font-family: 'Comic Sans MS', cursive, sans-serif; font-weight: 600">
           PigGpt
           <el-icon><ArrowDown /></el-icon>
         </div>
@@ -51,15 +51,18 @@ import { useChatStore } from './stores/chat';
 import { useUserStore } from './stores/user';
 import { storeToRefs } from 'pinia';
 import { isEmpty } from 'lodash';
+import { useUiConfigStore } from './stores/uiConfig';
 const route = useRoute(); // 获取当前路由信息
 const router = useRouter();
-const drawer = ref(false);
 const direction = ref<DrawerProps['direction']>('ltr');
 const loader = ref(false);
 const conversationStore = useConversationStore();
 const chatStore = useChatStore();
 const userStore = useUserStore();
+const uiConfigStore = useUiConfigStore();
 const { userInformation } = storeToRefs(userStore);
+const { activeDrawer } = storeToRefs(uiConfigStore);
+
 const setLoadingState = (loading: boolean) => {
   loader.value = loading;
 };
@@ -69,7 +72,7 @@ const createConversation = async () => {
   const uuid = genderateUUID();
   const conversationTem = {
     id: uuid,
-    aiType: 'deepseek-chat'
+    aiType: chatStore.selectedAiType
   } as ConversationEntity;
 
   conversationStore.addActiveConversation(conversationTem);
@@ -85,12 +88,17 @@ const createConversation = async () => {
     ElMessage.error('用户信息不存在，请重新登录');
     router.push('/');
   }
-  chatStore.clearReplyListBaidu();
-  chatStore.clearReplyListDeepseek();
+
+  if (chatStore.selectedAiType.startsWith('deepseek')) {
+    chatStore.clearReplyListDeepseek();
+  }
+  if (chatStore.selectedAiType.startsWith('baidu')) {
+    chatStore.clearReplyListBaidu();
+  }
 };
 
 const handleClose = (done: () => void) => {
-  drawer.value = false;
+  uiConfigStore.toggleActiveDrawer(false);
 };
 
 // 使用watch监听路由变化

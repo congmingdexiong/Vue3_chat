@@ -1,4 +1,5 @@
-﻿import type { Conversation } from '@/domain/Conversation';
+﻿import type { ChatContent } from '@/domain/ChatContent';
+import type { Conversation } from '@/domain/Conversation';
 import AxiosInstance from '@/utils/AxiosInstance';
 
 export const getSceneId = async () => {
@@ -76,5 +77,11 @@ export const deleteConversation = async (conversation: Conversation) => {
   return await AxiosInstance.post<Conversation, Conversation>(
     '/api/deleteConversation',
     conversation
+  );
+};
+
+export const getChatMessageByConversationId = async (conversationId: string) => {
+  return await AxiosInstance.get<null, ChatContent[]>(
+    `/api/getChatMessage?conversationId=${conversationId}`
   );
 };

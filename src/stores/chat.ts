@@ -14,8 +14,14 @@ const useChatStore = defineStore('chat', {
     addReplyListBaidu(reply: Reply) {
       this.replyListBaidu.push(reply);
     },
+    addAllReplyListBaidu(replys: Reply[]) {
+      this.replyListBaidu = replys;
+    },
     addReplyListDeepseek(reply: Reply) {
       this.replyListDeepSeek.push(reply);
+    },
+    addAllReplyListDeepseek(replys: Reply[]) {
+      this.replyListDeepSeek = replys;
     },
     clearReplyListBaidu() {
       this.replyListBaidu = [];

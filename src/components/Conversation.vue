@@ -27,8 +27,29 @@
         :key="conversation.id"
         @click="setActiveConversation(conversation)"
       >
-        <div style="display: inline-block" v-if="!conversation.editStatus">
-          {{ conversation.label }}
+        <div class="nav-content-label-wrapper" v-if="!conversation.editStatus">
+          <div style="margin-right: 0.5rem">
+            <el-avatar
+              shape="square"
+              :size="15"
+              fit="fill"
+              v-if="
+                conversation.aiType === 'deepseek-chat' ||
+                conversation.aiType === 'deepseek-reasoner'
+              "
+              src="/deepseek_logo.PNG"
+            />
+            <el-avatar
+              v-if="conversation.aiType === 'baidu'"
+              shape="square"
+              :size="15"
+              fit="cover"
+              src="/baidu_logo.PNG"
+            />
+          </div>
+          <div :class="{ selected: conversation.id === selectedConversation?.id }">
+            {{ conversation.label }}
+          </div>
         </div>
 
         <input type="text" v-model="conversation.label" v-if="conversation.editStatus" />
@@ -80,13 +101,16 @@
 
 <script setup lang="ts" name="Conversation">
 import type { Conversation } from '@/domain/Conversation';
+import type { Reply } from '@/domain/Reply';
 import {
   newConversation,
   deleteConversation as deleteConversationById,
-  updateConversation as updateConversationById
+  updateConversation as updateConversationById,
+  getChatMessageByConversationId
 } from '@/service/chatService';
 import { useChatStore } from '@/stores/chat';
 import { useConversationStore } from '@/stores/conversation';
+import { useUiConfigStore } from '@/stores/uiConfig';
 import { useUserStore } from '@/stores/user';
 import { genderateUUID } from '@/utils/app.utils';
 import { ElMessage } from 'element-plus';
@@ -102,13 +126,14 @@ const router = useRouter();
 const userStore = useUserStore();
 const conversationStore = useConversationStore();
 const chatStore = useChatStore();
-const { allGroupedConversations } = storeToRefs(conversationStore);
+const uiConfigStore = useUiConfigStore();
+const { allGroupedConversations, selectedConversation } = storeToRefs(conversationStore);
 
 const createConversation = async () => {
   const uuid = genderateUUID();
   const conversationTem = {
     id: uuid,
-    aiType: 'deepseek-chat'
+    aiType: chatStore.selectedAiType
   } as Conversation;
 
   conversationStore.addActiveConversation(conversationTem);
@@ -122,8 +147,23 @@ const createConversation = async () => {
 
 const handleClick = () => {};
 
-const setActiveConversation = (conversation: Conversation) => {
+const setActiveConversation = async (conversation: Conversation) => {
+  chatStore.addActiveAiType(conversation.aiType);
   conversationStore.addActiveConversation(conversation);
+  const chatContents = await getChatMessageByConversationId(conversation.id);
+  chatContents.sort((a, b) => a.createdTime.localeCompare(b.createdTime));
+  const replyList: Reply[] = chatContents.map(chatContent => {
+    return { type: chatContent.userType === 'bot' ? 'chat' : 'user', content: chatContent.content };
+  });
+  if (chatStore.selectedAiType.startsWith('deepseek')) {
+    chatStore.addAllReplyListDeepseek(replyList);
+    (document.getElementById('tab-deepseek') as HTMLElement).click();
+  }
+  if (chatStore.selectedAiType.startsWith('baidu')) {
+    chatStore.addAllReplyListBaidu(replyList);
+    (document.getElementById('tab-baidu') as HTMLElement).click();
+  }
+  uiConfigStore.toggleActiveDrawer(false);
 };
 
 const updateConversation = async (conversation: Conversation) => {
@@ -187,6 +227,17 @@ const reloadUserInfo = async () => {
       margin-bottom: 1rem;
       display: flex;
       justify-content: space-between;
+      .nav-content-label-wrapper {
+        display: flex;
+        width: 100%;
+
+        > :nth-child(2) {
+          width: 90%;
+          &.selected {
+            border: 2px solid rgb(236, 245, 255);
+          }
+        }
+      }
       .nav-menu-show {
         display: block;
       }

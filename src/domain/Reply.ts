@@ -2,5 +2,5 @@
   //chat or user
   type: string;
   content: string;
-  stat: string;
+  stat?: string;
 }
