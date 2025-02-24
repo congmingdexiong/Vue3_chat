@@ -58,58 +58,40 @@
 import Article from '@/components/Article.vue';
 import InputBox from '@/components/InputBox.vue';
 import type { Reply } from '@/domain/Reply';
-import { getUserInfo } from '@/service/chatService';
 import { ElMessage, type TabsPaneContext } from 'element-plus';
 import { isEmpty } from 'lodash';
-import { onMounted, reactive, ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
-import emitter from '@/utils/emitter';
 import { useConversationStore } from '@/stores/conversation';
 import { useChatStore } from '@/stores/chat';
 import type { Conversation } from '@/domain/Conversation';
 import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/stores/user';
+
 const router = useRouter();
 const inputArea = ref<HTMLElement | null>(null);
-const userInformation = ref({});
 const activeTab = ref('deepseek');
 const activeName = ref('deepseek');
 const conversationStore = useConversationStore();
 const componentConversation = ref();
 const chatStore = useChatStore();
-const { replyListBaidu, replyListDeepSeek } = storeToRefs(chatStore);
-
+const userStore = useUserStore();
 const inputDeep = ref();
 const inputBaidu = ref();
+const { userInformation } = storeToRefs(userStore);
+const { replyListBaidu, replyListDeepSeek } = storeToRefs(chatStore);
 
 onMounted(async () => {
   try {
-    const userInfo = await getUserInfo();
+    const userInfo = await userStore.getActiveUserInfo();
     if (!isEmpty(userInfo.nickname)) {
-      userInformation.value = userInfo;
-      emitter.emit('sendUserInfo', userInfo);
       ElMessage.info(`您好~~尊敬的 ${userInfo.nickname},欢迎使用PigGpt!!`);
+      conversationStore.addAllConversations(userInfo.conversations);
     }
-    conversationStore.addAllConversations(userInfo.conversations);
-    userInformation.value = userInfo;
   } catch {
     ElMessage.error('用户信息不存在，请重新登录');
     router.push('/');
   }
-
-  emitter.on('reloadUserInfo', async () => {
-    try {
-      const userInfo = await getUserInfo();
-      if (!isEmpty(userInfo.nickname)) {
-        userInformation.value = userInfo;
-        emitter.emit('sendUserInfo', userInfo);
-      }
-      conversationStore.addAllConversations(userInfo.conversations);
-      userInformation.value = userInfo;
-    } catch {
-      ElMessage.error('用户信息不存在，请重新登录');
-      router.push('/');
-    }
-  });
 });
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
@@ -159,15 +141,15 @@ watchEffect(() => {
   }
 });
 
-function getScrollHeight(element: HTMLElement | any) {
-  // 获取元素的内容高度
-  const totalHeight = element.scrollHeight;
-  // 获取元素的可视区域高度
-  const viewportHeight = element.clientHeight;
-  // 获取滚动条高度
-  const scrollHeight = totalHeight - viewportHeight;
-  return scrollHeight;
-}
+// function getScrollHeight(element: HTMLElement | any) {
+//   // 获取元素的内容高度
+//   const totalHeight = element.scrollHeight;
+//   // 获取元素的可视区域高度
+//   const viewportHeight = element.clientHeight;
+//   // 获取滚动条高度
+//   const scrollHeight = totalHeight - viewportHeight;
+//   return scrollHeight;
+// }
 </script>
 
 <style lang="scss">

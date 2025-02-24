@@ -51,14 +51,16 @@
 </template>
 
 <script setup lang="ts" name="InputBox">
-import { computed, inject, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
+import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue';
 import { ElMessage, ElNotification } from 'element-plus';
 import { getChatDataBaidu, getChatDataDeepSeek } from '@/service/chatService';
 import emitter from '../utils/emitter';
 import { useConversationStore } from '@/stores/conversation';
 import { genderateUUID } from '@/utils/app.utils';
 import { useChatStore } from '@/stores/chat';
-import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/stores/user';
+import { isEmpty } from 'lodash';
+import { useRouter } from 'vue-router';
 
 const props = defineProps(['setReplyList', 'replyList', 'type', 'activeTab', 'title']);
 const { setLoadingState } = inject('appLoading', {
@@ -68,7 +70,6 @@ const { setLoadingState } = inject('appLoading', {
 const buttonRef = ref<HTMLElement | null>();
 const userInput = ref<HTMLElement | null>();
 const chatStore = useChatStore();
-// const { activeAiType } = storeToRefs(chatStore);
 
 const placeholder = computed(() =>
   props.type === 'deepseek'
@@ -83,6 +84,9 @@ const conversationStore = useConversationStore();
 const componentConversation = ref();
 
 const emit = defineEmits(['send-componentConversation']);
+const router = useRouter();
+
+const userStore = useUserStore();
 
 watch(
   () => reasonerEnabled.value,
@@ -149,7 +153,7 @@ async function handleUserInputFn(content: string, type: string) {
       componentConversation.value = axiosRes?.conversation;
       emitter.emit('send-componentConversation', axiosRes?.conversation);
       conversationStore.addActiveConversation(axiosRes?.conversation);
-      emitter.emit('reloadUserInfo');
+      reloadUserInfo();
       props.setReplyList({ type: 'chat', content: axiosRes?.result }, type);
     } catch (error) {
       props.setReplyList(
@@ -180,6 +184,18 @@ const enableReasoner = () => {
   } else {
     const aiType = reasonerEnabled.value ? 'deepseek-reasoner' : 'deepseek-chat';
     chatStore.addActiveAiType(aiType);
+  }
+};
+
+const reloadUserInfo = async () => {
+  try {
+    const userInfo = await userStore.getActiveUserInfo();
+    if (!isEmpty(userInfo.nickname)) {
+      conversationStore.addAllConversations(userInfo.conversations);
+    }
+  } catch {
+    ElMessage.error('用户信息不存在，请重新登录');
+    router.push('/');
   }
 };
 

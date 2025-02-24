@@ -40,33 +40,30 @@
 
 <script setup lang="ts" name="App">
 import Conversation from './components/Conversation.vue';
-import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { RouterView, useRoute, useRouter } from 'vue-router';
 import { provide, ref, watch } from 'vue';
-import type { DrawerProps } from 'element-plus';
-import emitter from './utils/emitter';
+import { ElMessage, type DrawerProps } from 'element-plus';
 import { genderateUUID } from './utils/app.utils';
 import { useConversationStore } from './stores/conversation';
 import type { Conversation as ConversationEntity } from '@/domain/Conversation';
 import { newConversation } from './service/chatService';
 import { useChatStore } from './stores/chat';
+import { useUserStore } from './stores/user';
+import { storeToRefs } from 'pinia';
+import { isEmpty } from 'lodash';
 const route = useRoute(); // 获取当前路由信息
-const currentPath = ref(route.path); // 存储当前路径的响应式引用
+const router = useRouter();
 const drawer = ref(false);
 const direction = ref<DrawerProps['direction']>('ltr');
-const userInformation = ref({} as any);
 const loader = ref(false);
 const conversationStore = useConversationStore();
 const chatStore = useChatStore();
-emitter.on('sendUserInfo', (value: any) => {
-  userInformation.value = value;
-});
+const userStore = useUserStore();
+const { userInformation } = storeToRefs(userStore);
 const setLoadingState = (loading: boolean) => {
   loader.value = loading;
 };
 provide('appLoading', { loader, setLoadingState });
-const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath);
-};
 
 const createConversation = async () => {
   const uuid = genderateUUID();
@@ -79,7 +76,15 @@ const createConversation = async () => {
 
   //success - 1 fail - -1
   await newConversation(conversationTem);
-  emitter.emit('reloadUserInfo');
+  try {
+    const userInfo = await userStore.getActiveUserInfo();
+    if (!isEmpty(userInfo.nickname)) {
+      conversationStore.addAllConversations(userInfo.conversations);
+    }
+  } catch {
+    ElMessage.error('用户信息不存在，请重新登录');
+    router.push('/');
+  }
   chatStore.clearReplyListBaidu();
   chatStore.clearReplyListDeepseek();
 };

@@ -87,14 +87,19 @@ import {
 } from '@/service/chatService';
 import { useChatStore } from '@/stores/chat';
 import { useConversationStore } from '@/stores/conversation';
+import { useUserStore } from '@/stores/user';
 import { genderateUUID } from '@/utils/app.utils';
-import emitter from '@/utils/emitter';
+import { ElMessage } from 'element-plus';
+import { isEmpty } from 'lodash';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 const menu = ref();
 const isCollapse = ref(true);
 const backupConversation = ref();
-
+const router = useRouter();
+const userStore = useUserStore();
 const conversationStore = useConversationStore();
 const chatStore = useChatStore();
 const { allGroupedConversations } = storeToRefs(conversationStore);
@@ -110,7 +115,7 @@ const createConversation = async () => {
 
   //success - 1 fail - -1
   await newConversation(conversationTem);
-  emitter.emit('reloadUserInfo');
+  reloadUserInfo();
   chatStore.clearReplyListBaidu();
   chatStore.clearReplyListDeepseek();
 };
@@ -129,7 +134,7 @@ const updateConversation = async (conversation: Conversation) => {
 const submitNewConversationLabel = async (conversation: Conversation) => {
   conversation.editStatus = false;
   await updateConversationById(conversation);
-  emitter.emit('reloadUserInfo');
+  reloadUserInfo();
 };
 
 const cancelChangingLabel = (conversation: Conversation) => {
@@ -139,7 +144,19 @@ const cancelChangingLabel = (conversation: Conversation) => {
 
 const deleteConversation = async (conversation: Conversation) => {
   await deleteConversationById(conversation);
-  emitter.emit('reloadUserInfo');
+  reloadUserInfo();
+};
+
+const reloadUserInfo = async () => {
+  try {
+    const userInfo = await userStore.getActiveUserInfo();
+    if (!isEmpty(userInfo.nickname)) {
+      conversationStore.addAllConversations(userInfo.conversations);
+    }
+  } catch {
+    ElMessage.error('用户信息不存在，请重新登录');
+    router.push('/');
+  }
 };
 </script>
 
