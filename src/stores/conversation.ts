@@ -8,7 +8,7 @@ const useConversationStore = defineStore('conversation', {
     activeConversation: null
   }),
   actions: {
-    addActiveConversation(conversation: Conversation) {
+    addActiveConversation(conversation: Conversation | null) {
       this.activeConversation = conversation;
     },
     addAllConversations(conversations: Conversation[]) {

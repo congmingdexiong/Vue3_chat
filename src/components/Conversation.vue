@@ -154,6 +154,7 @@ const handleClick = () => {};
 const handleInputClick = () => {};
 
 const setActiveConversation = async (conversation: Conversation) => {
+  uiConfigStore.setLoader(true);
   chatStore.addActiveAiType(conversation.aiType);
   conversationStore.addActiveConversation(conversation);
   const chatContents = await getChatMessageByConversationId(conversation.id);
@@ -169,6 +170,7 @@ const setActiveConversation = async (conversation: Conversation) => {
     chatStore.addAllReplyListBaidu(replyList);
     (document.getElementById('tab-baidu') as HTMLElement).click();
   }
+  uiConfigStore.setLoader(false);
   uiConfigStore.toggleActiveDrawer(false);
 };
 
@@ -190,6 +192,13 @@ const cancelChangingLabel = (conversation: Conversation) => {
 
 const deleteConversation = async (conversation: Conversation) => {
   await deleteConversationById(conversation);
+  conversationStore.addActiveConversation(null);
+  if (chatStore.selectedAiType.startsWith('deepseek')) {
+    chatStore.clearReplyListDeepseek();
+  }
+  if (chatStore.selectedAiType.startsWith('baidu')) {
+    chatStore.clearReplyListBaidu();
+  }
   reloadUserInfo();
 };
 

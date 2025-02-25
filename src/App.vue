@@ -17,7 +17,7 @@
       </div>
     </div>
   </el-drawer>
-  <el-container class="common-layout" v-loading.fullscreen.lock="loader">
+  <el-container class="common-layout" v-loading.fullscreen.lock="selectedLoader">
     <el-aside width="200px">Aside</el-aside>
     <el-container>
       <el-header>
@@ -55,18 +55,17 @@ import { useUiConfigStore } from './stores/uiConfig';
 const route = useRoute(); // 获取当前路由信息
 const router = useRouter();
 const direction = ref<DrawerProps['direction']>('ltr');
-const loader = ref(false);
 const conversationStore = useConversationStore();
 const chatStore = useChatStore();
 const userStore = useUserStore();
 const uiConfigStore = useUiConfigStore();
 const { userInformation } = storeToRefs(userStore);
-const { activeDrawer } = storeToRefs(uiConfigStore);
+const { activeDrawer, selectedLoader } = storeToRefs(uiConfigStore);
 
 const setLoadingState = (loading: boolean) => {
-  loader.value = loading;
+  uiConfigStore.setLoader(loading);
 };
-provide('appLoading', { loader, setLoadingState });
+provide('appLoading', { selectedLoader, setLoadingState });
 
 const createConversation = async () => {
   const uuid = genderateUUID();

@@ -72,7 +72,7 @@ const buttonRef = ref<HTMLElement | null>();
 const userInput = ref<HTMLElement | null>();
 const chatStore = useChatStore();
 
-const { activeAiType } = storeToRefs(chatStore);
+const { activeAiType, reasonerEnabled } = storeToRefs(chatStore);
 
 const placeholder = computed(() =>
   props.type === 'deepseek'
@@ -81,7 +81,6 @@ const placeholder = computed(() =>
       : `Message ⇔‌ ${props.title}-chat`
     : `Message Baidu ⇔‌ ${props.title}`
 );
-const reasonerEnabled = ref(false);
 const conversationStore = useConversationStore();
 
 const componentConversation = ref();
@@ -91,18 +90,10 @@ const router = useRouter();
 
 const userStore = useUserStore();
 
-watchEffect(() => {
-  if (activeAiType.value === 'deepseek-reasoner') {
-    reasonerEnabled.value = true;
-  } else {
-    reasonerEnabled.value = false;
-  }
-});
-
 watch(
   () => reasonerEnabled.value,
-  () => {
-    if (reasonerEnabled.value) {
+  newVal => {
+    if (newVal) {
       ElNotification({
         message: '目前，deepseek-reasoner服务存在不稳定的问题，有可能失败，请谅解！',
         type: 'info'
@@ -189,7 +180,9 @@ emitter.on('resend', async () => {
 });
 
 const enableReasoner = () => {
-  reasonerEnabled.value = !reasonerEnabled.value;
+  chatStore.setReasonerEnabled(!reasonerEnabled.value);
+  console.log('reasonerEnabled:', reasonerEnabled.value);
+
   if (props.type === 'baidu') {
     chatStore.addActiveAiType(props.type);
   } else {

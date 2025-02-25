@@ -1,5 +1,10 @@
 <template>
-  <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+  <el-tabs
+    v-model="activeTabName"
+    class="demo-tabs"
+    :before-leave="tabLeave"
+    @tab-click="handleClick"
+  >
     <el-tab-pane label="DeepSeek" name="deepseek">
       <div class="chat-wrapper">
         <div class="chat-content">
@@ -9,7 +14,7 @@
                 :item="item"
                 :userInformation="userInformation"
                 type="deepseek"
-                :activeTab="activeTab"
+                :activeTab="activeTabName"
               ></Article>
             </template>
           </div>
@@ -21,7 +26,7 @@
             :replyList="replyListDeepSeek"
             :setReplyList="getReplyList"
             type="deepseek"
-            :activeTab="activeTab"
+            :activeTab="activeTabName"
             title="deepseek"
             @sendComponentConversation="getComponentConversation"
           ></InputBox>
@@ -33,7 +38,11 @@
         <div class="chat-content">
           <div class="chat-content-middle">
             <template v-for="(item, index) in replyListBaidu" v-bind:key="index">
-              <Article :item="item" :userInformation="userInformation"></Article>
+              <Article
+                :item="item"
+                :userInformation="userInformation"
+                :activeTab="activeTabName"
+              ></Article>
             </template>
           </div>
         </div>
@@ -43,7 +52,7 @@
             ref="inputBaidu"
             :replyList="replyListBaidu"
             :setReplyList="getReplyList"
-            :activeTab="activeTab"
+            :activeTab="activeTabName"
             type="baidu"
             title="ERNIE-4.0-8K"
             @sendComponentConversation="getComponentConversation"
@@ -67,15 +76,17 @@ import { useChatStore } from '@/stores/chat';
 import type { Conversation } from '@/domain/Conversation';
 import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/stores/user';
+import { useUiConfigStore } from '@/stores/uiConfig';
 
 const router = useRouter();
 const inputArea = ref<HTMLElement | null>(null);
-const activeTab = ref('deepseek');
-const activeName = ref('deepseek');
 const conversationStore = useConversationStore();
 const componentConversation = ref();
 const chatStore = useChatStore();
 const userStore = useUserStore();
+const uiConfigStore = useUiConfigStore();
+const { activeConversation } = storeToRefs(conversationStore);
+const { activeTabName, selectedTabActiveName } = storeToRefs(uiConfigStore);
 const inputDeep = ref();
 const inputBaidu = ref();
 const { userInformation } = storeToRefs(userStore);
@@ -95,29 +106,52 @@ onMounted(async () => {
   }
 });
 
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  activeTab.value = String(tab.paneName) || '';
-  if (activeAiType.value === 'deepseek-reasoner') {
-    chatStore.addActiveAiType('deepseek-reasoner');
+const tabLeave = async (tab: string) => {
+  console.log('当前到达:', tab);
+  if (tab === 'baidu') {
+    chatStore.setReasonerEnabled(false);
+    chatStore.addActiveAiType('baidu');
   } else {
-    chatStore.addActiveAiType(activeTab.value === 'deepseek' ? 'deepseek-chat' : 'baidu');
+    chatStore.addActiveAiType('deepseek-chat');
   }
+};
 
-  if (activeTab.value === 'deepseek') {
-    console.log('当前click deepseek tab, id:', inputDeep.value.componentConversation);
-    if (!inputDeep.value.componentConversation?.id) {
-      conversationStore.addActiveConversation({} as Conversation);
+const handleClick = (tab: TabsPaneContext, event: Event) => {
+  uiConfigStore.setActiveTabName(String(tab.paneName));
+
+  //如果组件存在conversation, 如果光是点击，直接load组件
+  //                        如果create,则用activeConversation
+  //如果组件不存在            如果光是点 do nothing
+
+  //                        如果create,则用activeConversation
+
+  if (selectedTabActiveName.value === 'deepseek') {
+    if (
+      activeConversation.value?.id &&
+      inputDeep.value.componentConversation?.id !== activeConversation.value?.id
+    ) {
+      // conversationStore.addActiveConversation(
+      //   conversationStore.activeConversation || ({} as Conversation)
+      // );
     } else {
-      conversationStore.addActiveConversation(inputDeep.value.componentConversation);
+      if (inputDeep.value.componentConversation?.id) {
+        conversationStore.addActiveConversation(inputDeep.value.componentConversation);
+      }
     }
   }
 
-  if (activeTab.value === 'baidu') {
-    console.log('当前click baidu tab, id:', inputBaidu.value.componentConversation);
-    if (!inputBaidu.value.componentConversation?.id) {
-      conversationStore.addActiveConversation({} as Conversation);
+  if (selectedTabActiveName.value === 'baidu') {
+    if (
+      activeConversation.value?.id &&
+      inputBaidu.value.componentConversation?.id !== activeConversation.value?.id
+    ) {
+      // conversationStore.addActiveConversation(
+      //   conversationStore.activeConversation || ({} as Conversation)
+      // );
     } else {
-      conversationStore.addActiveConversation(inputBaidu.value.componentConversation);
+      if (inputDeep.value.componentConversation?.id) {
+        conversationStore.addActiveConversation(inputBaidu.value.componentConversation);
+      }
     }
   }
 };
