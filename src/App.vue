@@ -75,6 +75,7 @@ const createConversation = async () => {
   } as ConversationEntity;
 
   conversationStore.addActiveConversation(conversationTem);
+  console.log('createConversation', conversationTem.id);
 
   //success - 1 fail - -1
   await newConversation(conversationTem);

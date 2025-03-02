@@ -62,6 +62,7 @@ import { useUserStore } from '@/stores/user';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
+import type { Conversation } from '@/domain/Conversation';
 
 const props = defineProps(['setReplyList', 'replyList', 'type', 'activeTab', 'title']);
 const { setLoadingState } = inject('appLoading', {
@@ -83,12 +84,33 @@ const placeholder = computed(() =>
 );
 const conversationStore = useConversationStore();
 
+const { activeConversation } = storeToRefs(conversationStore);
 const componentConversation = ref();
 
 const emit = defineEmits(['sendComponentConversation']);
 const router = useRouter();
 
 const userStore = useUserStore();
+
+// watch(
+//   [() => props.type, () => activeAiType.value, () => {}, () => activeConversation?.value?.id],
+//   () => {
+//     if (
+//       (props.type === 'baidu' &&
+//         activeAiType.value === 'baidu' &&
+//         activeConversation.value?.aiType === 'baidu') ||
+//       (props.type === 'deepseek' &&
+//         (activeAiType.value === 'deepseek-chat' || activeAiType.value === 'deepseek-reasoner') &&
+//         (activeConversation.value?.aiType === 'deepseek-chat' ||
+//           activeConversation.value?.aiType === 'deepseek-reasoner'))
+//     ) {
+//       console.log('props.type:', props.type);
+//       console.log('activeConversation', activeConversation?.value?.id);
+
+//       componentConversation.value = activeConversation;
+//     }
+//   }
+// );
 
 watch(
   () => reasonerEnabled.value,

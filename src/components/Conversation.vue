@@ -157,6 +157,7 @@ const setActiveConversation = async (conversation: Conversation) => {
   uiConfigStore.setLoader(true);
   chatStore.addActiveAiType(conversation.aiType);
   conversationStore.addActiveConversation(conversation);
+  uiConfigStore.setDrawerCreated(true);
   const chatContents = await getChatMessageByConversationId(conversation.id);
   chatContents.sort((a, b) => a.createdTime.localeCompare(b.createdTime));
   const replyList: Reply[] = chatContents.map(chatContent => {
@@ -164,11 +165,11 @@ const setActiveConversation = async (conversation: Conversation) => {
   });
   if (chatStore.selectedAiType.startsWith('deepseek')) {
     chatStore.addAllReplyListDeepseek(replyList);
-    (document.getElementById('tab-deepseek') as HTMLElement).click();
+    uiConfigStore.setActiveTabName('deepseek');
   }
   if (chatStore.selectedAiType.startsWith('baidu')) {
     chatStore.addAllReplyListBaidu(replyList);
-    (document.getElementById('tab-baidu') as HTMLElement).click();
+    uiConfigStore.setActiveTabName('baidu');
   }
   uiConfigStore.setLoader(false);
   uiConfigStore.toggleActiveDrawer(false);

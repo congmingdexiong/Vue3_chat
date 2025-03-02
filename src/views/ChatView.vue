@@ -91,6 +91,7 @@ const inputDeep = ref();
 const inputBaidu = ref();
 const { userInformation } = storeToRefs(userStore);
 const { replyListBaidu, replyListDeepSeek, activeAiType } = storeToRefs(chatStore);
+const { drawerCreated } = storeToRefs(uiConfigStore);
 const emit = defineEmits(['send-componentConversation']);
 
 onMounted(async () => {
@@ -106,54 +107,35 @@ onMounted(async () => {
   }
 });
 
-const tabLeave = async (tab: string) => {
-  console.log('当前到达:', tab);
-  if (tab === 'baidu') {
+const tabLeave = (actionName: string, oldActionName: string) => {
+  console.log('即将离开:', oldActionName);
+  console.log('当前到达:', actionName);
+  if (actionName === 'baidu') {
     chatStore.setReasonerEnabled(false);
     chatStore.addActiveAiType('baidu');
+    //边栏中点击create conversation的时候drawerCreated为true,不走下面逻辑，正常‘点击’切换tab的时候则调用下面逻辑
+    if (!drawerCreated.value) {
+      if (!inputBaidu.value.componentConversation?.id) {
+        conversationStore.addActiveConversation({} as Conversation);
+        console.log('create new conversation without id');
+      } else {
+        conversationStore.addActiveConversation(inputBaidu.value.componentConversation);
+        console.log('user existing conversation', inputBaidu.value.componentConversation.id);
+      }
+    }
   } else {
     chatStore.addActiveAiType('deepseek-chat');
-  }
-};
-
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  uiConfigStore.setActiveTabName(String(tab.paneName));
-
-  //如果组件存在conversation, 如果光是点击，直接load组件
-  //                        如果create,则用activeConversation
-  //如果组件不存在            如果光是点 do nothing
-
-  //                        如果create,则用activeConversation
-
-  if (selectedTabActiveName.value === 'deepseek') {
-    if (
-      activeConversation.value?.id &&
-      inputDeep.value.componentConversation?.id !== activeConversation.value?.id
-    ) {
-      // conversationStore.addActiveConversation(
-      //   conversationStore.activeConversation || ({} as Conversation)
-      // );
-    } else {
-      if (inputDeep.value.componentConversation?.id) {
+    if (!drawerCreated.value) {
+      if (!inputDeep.value.componentConversation?.id) {
+        conversationStore.addActiveConversation({} as Conversation);
+        console.log('create new conversation without id');
+      } else {
         conversationStore.addActiveConversation(inputDeep.value.componentConversation);
+        console.log('user existing conversation', inputBaidu.value.componentConversation.id);
       }
     }
   }
-
-  if (selectedTabActiveName.value === 'baidu') {
-    if (
-      activeConversation.value?.id &&
-      inputBaidu.value.componentConversation?.id !== activeConversation.value?.id
-    ) {
-      // conversationStore.addActiveConversation(
-      //   conversationStore.activeConversation || ({} as Conversation)
-      // );
-    } else {
-      if (inputDeep.value.componentConversation?.id) {
-        conversationStore.addActiveConversation(inputBaidu.value.componentConversation);
-      }
-    }
-  }
+  uiConfigStore.setDrawerCreated(false);
 };
 
 const getComponentConversation = (conversation: Conversation) => {
