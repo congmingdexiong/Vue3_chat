@@ -93,36 +93,16 @@ const router = useRouter();
 const userStore = useUserStore();
 
 // watch(
-//   [() => props.type, () => activeAiType.value, () => {}, () => activeConversation?.value?.id],
-//   () => {
-//     if (
-//       (props.type === 'baidu' &&
-//         activeAiType.value === 'baidu' &&
-//         activeConversation.value?.aiType === 'baidu') ||
-//       (props.type === 'deepseek' &&
-//         (activeAiType.value === 'deepseek-chat' || activeAiType.value === 'deepseek-reasoner') &&
-//         (activeConversation.value?.aiType === 'deepseek-chat' ||
-//           activeConversation.value?.aiType === 'deepseek-reasoner'))
-//     ) {
-//       console.log('props.type:', props.type);
-//       console.log('activeConversation', activeConversation?.value?.id);
-
-//       componentConversation.value = activeConversation;
+//   () => reasonerEnabled.value,
+//   newVal => {
+//     if (newVal) {
+//       ElNotification({
+//         message: '目前，deepseek-reasoner服务存在不稳定的问题，有可能失败，请谅解！',
+//         type: 'info'
+//       });
 //     }
 //   }
 // );
-
-watch(
-  () => reasonerEnabled.value,
-  newVal => {
-    if (newVal) {
-      ElNotification({
-        message: '目前，deepseek-reasoner服务存在不稳定的问题，有可能失败，请谅解！',
-        type: 'info'
-      });
-    }
-  }
-);
 
 onMounted(() => {
   // 添加事件监听
