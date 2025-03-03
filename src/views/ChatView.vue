@@ -123,7 +123,10 @@ const tabLeave = (actionName: string, oldActionName: string) => {
         console.log('user existing conversation', inputBaidu.value.componentConversation.id);
       }
     }
-  } else {
+    uiConfigStore.setDrawerCreated(false);
+  }
+
+  if (actionName === 'deepseek') {
     chatStore.addActiveAiType('deepseek-chat');
     if (!drawerCreated.value) {
       if (!inputDeep.value.componentConversation?.id) {
@@ -134,8 +137,8 @@ const tabLeave = (actionName: string, oldActionName: string) => {
         console.log('user existing conversation', inputBaidu.value.componentConversation.id);
       }
     }
+    uiConfigStore.setDrawerCreated(false);
   }
-  uiConfigStore.setDrawerCreated(false);
 };
 
 const getComponentConversation = (conversation: Conversation) => {
@@ -149,6 +152,8 @@ function getReplyList(reply: Reply, type: string) {
     chatStore.addReplyListDeepseek(reply);
   }
 }
+
+const handleClick = () => {};
 
 watchEffect(() => {
   if (!isEmpty(replyListDeepSeek) && document.querySelector('.chat-content-middle')) {
