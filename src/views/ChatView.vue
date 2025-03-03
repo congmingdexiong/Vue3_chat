@@ -90,7 +90,7 @@ const { activeTabName, selectedTabActiveName } = storeToRefs(uiConfigStore);
 const inputDeep = ref();
 const inputBaidu = ref();
 const { userInformation } = storeToRefs(userStore);
-const { replyListBaidu, replyListDeepSeek, activeAiType } = storeToRefs(chatStore);
+const { replyListBaidu, replyListDeepSeek, selectedAiType } = storeToRefs(chatStore);
 const { drawerCreated } = storeToRefs(uiConfigStore);
 const emit = defineEmits(['send-componentConversation']);
 
@@ -127,7 +127,8 @@ const tabLeave = (actionName: string, oldActionName: string) => {
   }
 
   if (actionName === 'deepseek') {
-    chatStore.addActiveAiType('deepseek-chat');
+    const aiType = selectedAiType.value === 'baidu' ? 'deepseek-chat' : selectedAiType.value;
+    chatStore.addActiveAiType(aiType);
     if (!drawerCreated.value) {
       if (!inputDeep.value.componentConversation?.id) {
         conversationStore.addActiveConversation({} as Conversation);
