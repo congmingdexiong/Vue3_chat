@@ -154,6 +154,8 @@ const handleClick = () => {};
 const handleInputClick = () => {};
 
 const setActiveConversation = async (conversation: Conversation) => {
+  // if current is deepseek and target is deepseek, tableave will not be triggered, so set to ''
+  uiConfigStore.setActiveTabName('');
   uiConfigStore.setLoader(true);
   chatStore.addActiveAiType(conversation.aiType);
   conversationStore.addActiveConversation(conversation);
